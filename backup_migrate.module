@@ -409,15 +409,16 @@ function action_backup_migrate_backup($op, $edit = array()) {
  */
 function backup_migrate_action_info() {
   return array(
-    'backup_migrate_action_backup' => array(
-      '#label' => t('Backup the database'),
-      '#module' => t('Backup and Migrate'),
-      '#description' => t('Backup the database with the default settings.'),
+    'backup_migrate_backup_action' => array(
+      'description' => t('Backup the database with the default settings'),
+      'configurable' => FALSE,
+      'hooks' => array('any' => TRUE),
+      'type' => 'system',
     ),
   );
 }
 
-function backup_migrate_action_backup() {
+function backup_migrate_backup_action() {
   _backup_migrate_backup_with_defaults();
 }
 
