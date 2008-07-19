@@ -1036,7 +1036,7 @@ function _backup_migrate_check_destination_dir( $mode = "" ) {
       $replace = array('%directory' => $directory, '!htaccess' => '<br />'. nl2br(check_plain($htaccess_lines)));
       drupal_set_message(t($message, $replace), "error");
       watchdog('security', $message, $replace, WATCHDOG_ERROR);
-      return FALSE;
+      //return FALSE;
     }
   }
 
@@ -1063,7 +1063,9 @@ function _backup_migrate_check_destination_dir( $mode = "" ) {
 
   // Attempt to read the test file via http. This may fail for other reasons,
   // so it's not a bullet-proof check.
-  $result = drupal_http_request( url( file_create_url( $subdir .'/test.txt' ), array( 'absolute' => TRUE ) ));
+  $path = trim(substr($subdir .'/test.txt', strlen(file_directory_path())), '\\/');
+  $url = $GLOBALS['base_url'] .'/'. file_directory_path() .'/'. str_replace('\\', '/', $path);
+  $result = drupal_http_request( $url );
   if ( strpos( $result->data, $test_contents ) !== FALSE ) {
     $message = t("Security notice: Backup and Migrate will not save backup files to the server because the destination directory is publicly accessible. If you want to save files to the server, please secure the '%directory' directory", array('%directory' => $directory));
     drupal_set_message($message, "error");
