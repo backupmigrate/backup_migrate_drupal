@@ -1036,7 +1036,7 @@ function _backup_migrate_check_destination_dir( $mode = "" ) {
       $replace = array('%directory' => $directory, '!htaccess' => '<br />'. nl2br(check_plain($htaccess_lines)));
       drupal_set_message(t($message, $replace), "error");
       watchdog('security', $message, $replace, WATCHDOG_ERROR);
-      //return FALSE;
+      return FALSE;
     }
   }
 
