@@ -951,9 +951,9 @@ function _backup_migrate_list_files($mode = "manual") {
             $file,
             date("m/d/Y h:i a", $info['filemtime']),
             format_size($info['filesize']),
-            l("download", "system/files/". $filepath),
-            user_access('restore from backup') ? l("restore", "admin/content/backup_migrate/restorefile/". $filepath) : '',
-            user_access('delete backup files') ? l("delete", "admin/content/backup_migrate/delete/". $filepath) : '',
+            l(t("Download"), "system/files/". $filepath),
+            user_access('restore from backup') ? l(t("Restore"), "admin/content/backup_migrate/restorefile/". $filepath) : '',
+            user_access('delete backup files') ? l(t("Delete"), "admin/content/backup_migrate/delete/". $filepath) : '',
           );
         }
       }
@@ -1174,7 +1174,7 @@ function _backup_migrate_default_file_name() {
     return '[site-name]';
   }
   else {
-    return _backup_migrate_clean_filename(variable_get(site_name, "backup_migrate"));
+    return _backup_migrate_clean_filename(variable_get('site_name', "backup_migrate"));
   }
 }
 
@@ -1227,6 +1227,10 @@ function _backup_migrate_default_structure_only_tables() {
     'devel_times',
   );
   $alltables = array_merge($core, module_invoke_all('devel_caches'));
-  return $alltables;
+  global $db_prefix;
+  foreach ($alltables as $table) {
+    $prefixed_tables[] = $db_prefix . $table;
+  }
+  return $prefixed_tables;
 }
 
