@@ -130,6 +130,21 @@ function backup_migrate_cron() {
       _backup_migrate_remove_expired_backups();
     }
   }
+
+  // Delete temp files abandoned for 6 or more hours.
+  foreach (file_scan_directory(file_directory_temp(), 'backup_migrate_*', array('.', '..'), 0, FALSE) as $file) {
+    if (filectime($file->filename) < time() - 21600) {
+      unlink($file->filename);
+    }
+  }
+}
+
+/**
+ * Implementation of hook_exit().
+ */
+function backup_migrate_exit() {
+  // Delete any temporary files generated during this execution.
+  _backup_migrate_temp_file('', TRUE);
 }
 
 /**
@@ -920,10 +935,15 @@ function _backup_migrate_temp_file($extension = "", $delete_all = FALSE) {
   if ($delete_all) {
     _backup_migrate_temp_files_delete($files);
   }
-  $file = tempnam(file_directory_temp(), 'tmp_');
-  $file .= $extension ? ".". $extension : "";
-  $files[] = $file;
-  return $file;
+  else {
+    $file = tempnam(file_directory_temp(), 'backup_migrate_');
+    if (!empty($extension)) {
+      unlink($file);
+      $file .= '.'. $extension;
+    }
+    $files[] = $file;
+    return $file;
+  }
 }
 
 /**
