@@ -969,7 +969,7 @@ function _backup_migrate_list_files($mode = "manual") {
         if ($info = _backup_migrate_file_info($filepath)) {
           $files[$file] = array(
             $file,
-            date("m/d/Y h:i a", $info['filemtime']),
+            format_date($info['filemtime']),
             format_size($info['filesize']),
             l(t("Download"), "system/files/". $filepath),
             user_access('restore from backup') ? l(t("Restore"), "admin/content/backup_migrate/restorefile/". $filepath) : '',
