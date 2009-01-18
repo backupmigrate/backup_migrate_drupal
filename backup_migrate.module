@@ -388,7 +388,7 @@ function backup_migrate_restore() {
 
   $form[] = array(
     '#type' => 'markup',
-    '#value' => t('<p>This will delete some or all of your data and cannot be undone. If there is a sessions table in the backup file, you and all other currently logged in users will be logged out. <strong>Always test your backups on a non-production server!</strong><p>'),
+    '#value' => t('<p>This will delete some or all of your data and cannot be undone. If there is a sessions table in the backup file, you and all other currently logged in users will be logged out. <strong>Always test your backups on a non-production server!</strong></p>'),
   );
 
   $form[] = array(
