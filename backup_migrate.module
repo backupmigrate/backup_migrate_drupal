@@ -266,7 +266,7 @@ function backup_migrate_ui_manual_backup_load_profile_form(&$form_state, $profil
     $form['profile']['profile_id'] = array(
       "#type" => "select",
       "#title" => t("Load Settings"),
-      '#default_value' => $profile->get_id() ? $profile->get_id() : 0,
+      '#default_value' => is_object($profile) ? $profile->get_id() : 0,
       "#options" => $profile_options,
     );
     $form['profile']['load_profile'] = array(
