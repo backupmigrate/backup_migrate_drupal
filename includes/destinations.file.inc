@@ -193,52 +193,62 @@ class backup_migrate_destination_files extends backup_migrate_destination {
    * Check that a web accessible directory has been properly secured, othewise attempt to secure it.
    */
   function check_web_dir($directory) {
-    // Check for a htaccess file which adequately protects the backup files.
-    $htaccess_lines = "order allow,deny\ndeny from all\n";
-    if (!is_file($directory .'/.htaccess') || strpos(file_get_contents($directory .'/.htaccess'), $htaccess_lines) === FALSE) {
-      // Attempt to protect the backup files from public access using htaccess.
-      if (($fp = @fopen($directory .'/.htaccess', 'w')) && @fputs($fp, $htaccess_lines)) {
-        fclose($fp);
-        chmod($directory .'/.htaccess', 0664);
+    if (!is_file($directory .'/checked.txt')) {
+      // Check for a htaccess file which adequately protects the backup files.
+      $htaccess_lines = "order allow,deny\ndeny from all\n";
+      if (!is_file($directory .'/.htaccess') || strpos(file_get_contents($directory .'/.htaccess'), $htaccess_lines) === FALSE) {
+        // Attempt to protect the backup files from public access using htaccess.
+        if (($fp = @fopen($directory .'/.htaccess', 'w')) && @fputs($fp, $htaccess_lines)) {
+          fclose($fp);
+          chmod($directory .'/.htaccess', 0664);
+        }
+        // Unable to create htaccess... warn the user.
+        else {
+          $message = "Security warning: Couldn't modify .htaccess file. Please create a .htaccess file in your %directory directory which contains the following lines: <code>!htaccess</code> or add them to the existing .htaccess file";
+          $replace = array('%directory' => $directory, '!htaccess' => '<br />'. nl2br(check_plain($htaccess_lines)));
+          drupal_set_message(t($message, $replace), "error");
+          watchdog('security', t($message, $replace), WATCHDOG_ERROR);
+          return FALSE;
+        }
       }
-      // Unable to create htaccess... warn the user.
-      else {
-        $message = "Security warning: Couldn't modify .htaccess file. Please create a .htaccess file in your %directory directory which contains the following lines: <code>!htaccess</code> or add them to the existing .htaccess file";
-        $replace = array('%directory' => $directory, '!htaccess' => '<br />'. nl2br(check_plain($htaccess_lines)));
-        drupal_set_message(t($message, $replace), "error");
-        watchdog('security', t($message, $replace), WATCHDOG_ERROR);
+  
+      // Check the user agent to make sure we're not responding to a request from drupal itself.
+      // That should prevent infinite loops which could be caused by poormanscron in some circumstances.
+      if (strpos($_SERVER['HTTP_USER_AGENT'], 'Drupal') !== FALSE) {
         return FALSE;
       }
-    }
-
-    // Check the user agent to make sure we're not responding to a request from drupal itself.
-    // That should prevent infinite loops which could be caused by poormanscron in some circumstances.
-    if (strpos($_SERVER['HTTP_USER_AGENT'], 'Drupal') !== FALSE) {
-      return FALSE;
-    }
-
-    // Check to see if the destination is publicly accessible
-    $test_contents = "this file should not be publicly accesible";
-    // Create the the text.txt file if it's not already there.
-    if (!is_file($directory .'/test.txt') || file_get_contents($directory .'/test.txt') != $test_contents) {
-      if ($fp = fopen($directory .'/test.txt', 'w')) {
-        @fputs($fp, $test_contents);
-        fclose($fp);
+  
+      // Check to see if the destination is publicly accessible
+      $test_contents = "this file should not be publicly accesible";
+      // Create the the text.txt file if it's not already there.
+      if (!is_file($directory .'/test.txt') || file_get_contents($directory .'/test.txt') != $test_contents) {
+        if ($fp = fopen($directory .'/test.txt', 'w')) {
+          @fputs($fp, $test_contents);
+          fclose($fp);
+        }
+        else {
+          $message = t("Security notice: Backup and Migrate was unable to write a test text file to the destination directory %directory, and is therefore unable to check the security of the backup destination. Backups to the server will be disabled until the destination becomes writable and secure.", array('%directory' => $directory));
+          drupal_set_message($message, "error");
+          return FALSE;
+        }
       }
-      else {
-        $message = t("Security notice: Backup and Migrate was unable to write a test text file to the destination directory %directory, and is therefore unable to check the security of the backup destination. Backups to the server will be disabled until the destination becomes writable and secure.", array('%directory' => $directory));
+  
+      // Attempt to read the test file via http. This may fail for other reasons,
+      // so it's not a bullet-proof check.
+      $path = trim(drupal_substr($directory .'/test.txt', drupal_strlen(file_directory_path())), '\\/');
+      if ($this->test_file_readable_remotely($path, $test_contents)) {
+        $message = t("Security notice: Backup and Migrate will not save backup files to the server because the destination directory is publicly accessible. If you want to save files to the server, please secure the '%directory' directory", array('%directory' => $directory));
         drupal_set_message($message, "error");
         return FALSE;
       }
-    }
 
-    // Attempt to read the test file via http. This may fail for other reasons,
-    // so it's not a bullet-proof check.
-    $path = trim(drupal_substr($directory .'/test.txt', drupal_strlen(file_directory_path())), '\\/');
-    if ($this->test_file_readable_remotely($path, $test_contents)) {
-      $message = t("Security notice: Backup and Migrate will not save backup files to the server because the destination directory is publicly accessible. If you want to save files to the server, please secure the '%directory' directory", array('%directory' => $directory));
-      drupal_set_message($message, "error");
-      return FALSE;
+      // Directory was checked and passed, create the 'checked.txt' file so we don't have to check again.
+      $checked_contents = t("This file indicates that this directory has been checked for public access. Do not remove this file unless you change your server settings or file permissions.");
+      // Create the the checked.txt file.
+      if ($fp = fopen($directory .'/checked.txt', 'w')) {
+        @fputs($fp, $checked_contents);
+        fclose($fp);
+      }
     }
     return $directory;
   }
@@ -302,7 +312,7 @@ class backup_migrate_destination_files_builtin extends backup_migrate_destinatio
 class backup_migrate_destination_files_manual extends backup_migrate_destination_files {
   var $supported_ops = array('manual backup', 'restore', 'list files', 'configure', 'delete');
   function __construct($params = array()) {
-    $dir = $this->check_dir(file_directory_path() .'/backup_migrate/scheduled');
+    $dir = file_directory_path() .'/backup_migrate/manual';
     parent::__construct($params + array('location' => $dir, 'name' => t('Manual Backups Directory')));
   }
 }
@@ -313,7 +323,7 @@ class backup_migrate_destination_files_manual extends backup_migrate_destination
 class backup_migrate_destination_files_scheduled extends backup_migrate_destination_files {
   var $supported_ops = array('scheduled backup', 'restore', 'list files', 'configure', 'delete');
   function __construct($params = array()) {
-    $dir = $this->check_dir(file_directory_path() .'/backup_migrate/scheduled');
+    $dir = file_directory_path() .'/backup_migrate/scheduled';
     parent::__construct($params + array('location' => $dir, 'name' => t('Scheduled Backups Directory')));
   }
 }
