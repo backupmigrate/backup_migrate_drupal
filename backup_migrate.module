@@ -151,17 +151,6 @@ function backup_migrate_cron() {
 }
 
 /**
- * Implementation of hook_exit().
- */
-function backup_migrate_exit() {
-  if (function_exists('drupal_get_path')) {
-    backup_migrate_include('files');
-    // Delete any temporary files generated during this execution.
-    backup_migrate_cleanup();
-  }
-}
-
-/**
  * Implementation of hook_perm().
  */
 function backup_migrate_perm() {
@@ -677,7 +666,7 @@ function backup_migrate_perform_restore($destination_id, $file_id, $settings = a
     set_time_limit(variable_get('backup_migrate_backup_max_time', 1200));
   }
 
-  // Register shutdown callback
+  // Register shutdown callback.
   register_shutdown_function('backup_migrate_cleanup');
 
   // Load the file from the destination.
