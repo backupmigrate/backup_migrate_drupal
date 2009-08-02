@@ -27,15 +27,15 @@ class backup_migrate_destination_db extends backup_migrate_destination_remote {
     backup_migrate_include('files', 'db');
 
     // Switch to the new db.
-    _backup_migrate_db_switch_db($this->dest_url(FALSE));
+    _backup_migrate_db_switch_db($this->url(FALSE));
 
     // Restore the file to the db.
-    backup_migrate_perform_restore_file($file);
+    $num = backup_migrate_perform_restore_file($file);
 
     // Switch back to the old db.
     _backup_migrate_db_switch_db();
 
-    return $file;
+    return $num ? $file : NULL;
   }
 
   /**

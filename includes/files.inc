@@ -54,6 +54,7 @@ function _backup_migrate_filetypes() {
   backup_migrate_include('filters');
   $out = array(
     "sql" => array(
+      'id' => 'mysql',
       "extension" => "sql",
       "filemime" => "text/x-sql",
       "backup" => TRUE,
@@ -67,6 +68,13 @@ function _backup_migrate_filetypes() {
     ),
   );
   $out += backup_migrate_filters_file_types();
+
+  // Set the default type ids.
+  foreach ($out as $key => $val) {
+    if (empty($val['id'])) {
+      $out[$key]['id'] = $key;
+    }
+  }
   return $out;
 }
 
