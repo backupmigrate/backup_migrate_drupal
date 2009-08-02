@@ -88,7 +88,8 @@ function backup_migrate_menu() {
   $items['admin/content/backup_migrate'] = array(
     'title' => 'Backup and Migrate',
     'description' => 'Backup/restore your database or migrate data to or from another Drupal site.',
-    'page callback' => 'backup_migrate_ui_manual_backup_quick',
+    'page callback' => 'backup_migrate_menu_callback',
+    'page arguments' => array('', 'backup_migrate_ui_manual_backup_quick', TRUE),
     'access arguments' => array('access backup and migrate'),
     'type' => MENU_NORMAL_ITEM,
   );
@@ -146,6 +147,9 @@ function backup_migrate_cron() {
   require_once './includes/common.inc';
   _drupal_bootstrap_full();
 
+  // Set the message mode to logging.
+  _backup_migrate_message_callback('_backup_migrate_message_log');
+
   backup_migrate_include('schedules');
   backup_migrate_schedules_run();
 }
@@ -187,7 +191,8 @@ function backup_migrate_menu_callback($include, $function, $interactive = TRUE) 
   if ($include) {
     backup_migrate_include($include);
   }
-  _backup_migrate_interactive($interactive);
+  // Set the message handler based on interactivity setting.
+  _backup_migrate_message_callback($interactive ? '_backup_migrate_message_browser' : '_backup_migrate_message_log');
   // Get the arguments with the first 3 removed.
   $args = array_slice(func_get_args(), 3);
   return call_user_func_array($function, $args);
@@ -491,9 +496,6 @@ function backup_migrate_ui_manual_backup_form_submit($form, &$form_state) {
  */
 
 function backup_migrate_ui_manual_backup_perform($settings) {
-  // Set interactive mode so that messages are sent to the user.
-  _backup_migrate_interactive(TRUE);
-
   // Peform the actual backup.
   $file = backup_migrate_perform_backup($settings);
 
@@ -713,7 +715,7 @@ function backup_migrate_perform_restore_file($file, $destination_id, $settings =
     set_time_limit(variable_get('backup_migrate_restore_max_time', 1200));
   }
 
-  $source = backup_migrate_get_destination($settings->source_id);
+  $source = backup_migrate_get_destination(empty($settings->source_id) ? 'db_url:default' : $settings->source_id);
 
   $num = backup_migrate_db_restore($source, $file, $settings);
 
@@ -722,7 +724,7 @@ function backup_migrate_perform_restore_file($file, $destination_id, $settings =
     if ($destination && $destination->op('list files')) {
       $message .= ' (<a href="!restoreurl">Restore again</a>)';
     }
-    _backup_migrate_message($message, array("%destination" => $destination->get_name(), "%num" => $num, '%file' => $file->filename(), '!restoreurl' => url('admin/content/backup_migrate/destination/list/restorefile/'. $destination_id ."/". $file->filename())));
+    backup_migrate_restore_succeed($message, array("%destination" => $destination->get_name(), "%num" => $num, '%file' => $file->filename(), '!restoreurl' => url('admin/content/backup_migrate/destination/list/restorefile/'. $destination_id ."/". $file->filename())), $settings);
   }
 
   // Delete any temp files we've created.
@@ -747,9 +749,31 @@ function backup_migrate_backup_fail($message, $params, $settings) {
  */
 function backup_migrate_backup_succeed($message, $params, $settings) {
   backup_migrate_include('filters', 'files');
-  _backup_migrate_message($message, $params);
+  _backup_migrate_message($message, $params, 'success');
   backup_migrate_cleanup();
   backup_migrate_filters_invoke_all('backup_succeed', $settings, $message, $params);
+  return FALSE;
+}
+
+/**
+ * Clean up when a restore operation fails.
+ */
+function backup_migrate_restore_fail($message, $params, $settings) {
+  backup_migrate_include('files', 'filters');
+  _backup_migrate_message($message, $params, 'error');
+  backup_migrate_cleanup();
+  backup_migrate_filters_invoke_all('restore_fail', $settings, $message, $params);
+  return FALSE;
+}
+
+/**
+ * Clean up when a restore operation suceeds.
+ */
+function backup_migrate_restore_succeed($message, $params, $settings) {
+  backup_migrate_include('filters', 'files');
+  _backup_migrate_message($message, $params, 'success');
+  backup_migrate_cleanup();
+  backup_migrate_filters_invoke_all('restore_succeed', $settings, $message, $params);
   return FALSE;
 }
 
@@ -828,7 +852,7 @@ function backup_migrate_action_backup() {
  * Backup the database with the default settings.
  */
 function _backup_migrate_backup_with_defaults($destination_id = "manual") {
-  backup_migrate_include('files', 'db');
+  backup_migrate_include('files', 'db', 'profiles');
 
   $settings = _backup_migrate_profile_saved_default_profile();
   $settings->destination_id = $destination_id;
@@ -839,11 +863,10 @@ function _backup_migrate_backup_with_defaults($destination_id = "manual") {
  * Helper function to set a drupal message and watchdog message depending on whether the module is being run interactively.
  */
 function _backup_migrate_message($message, $replace = array(), $type = 'status') {
-  // Only set a message if the module is being run interactively
-  if (_backup_migrate_interactive()) {
-    drupal_set_message(t($message, $replace), $type, FALSE);
+  // Only set a message if there is a callback handler to handle the message.
+  if (($callback = _backup_migrate_message_callback()) && function_exists($callback)) {
+    $callback($message, $replace, $type);
   }
-  watchdog('backup_migrate', $message, $replace, $type == 'error' ? WATCHDOG_ERROR : WATCHDOG_NOTICE);
 
   // Store the message in case it's needed (for the status notification filter for example).
   _backup_migrate_messages($message, $replace, $type);
@@ -861,15 +884,32 @@ function _backup_migrate_messages($message = NULL, $replace = array(), $type = '
 }
 
 /**
- * Status function which stores whether the module is being run interactively (via form submits)
- *  or non-iteractively (cron, actions, etc.)
+ * Send a message to the browser. The normal type of message handling for interactive use.
  */
-function _backup_migrate_interactive($interactive = NULL) {
-  static $is_interactive = NULL;
-  if ($interactive !== NULL) {
-    $is_interactive = $interactive;
+function _backup_migrate_message_browser($message, $replace, $type) {
+  // Use drupal_set_message to display to the user.
+  drupal_set_message(t($message, $replace), str_replace('success', 'status', $type), FALSE);
+  // Log the message as well for admins.
+  _backup_migrate_message_log($message, $replace, $type);
+}
+
+/**
+ * Log message if we are in a non-interactive mode such as a cron run.
+ */
+function _backup_migrate_message_log($message, $replace, $type) {
+  // Log the message for admins.
+  watchdog('backup_migrate', $message, $replace, $type == 'error' ? WATCHDOG_ERROR : WATCHDOG_NOTICE);
+}
+
+/**
+ * Set or retrieve a message handler.
+ */
+function _backup_migrate_message_callback($callback = NULL) {
+  static $current_callback = '_backup_migrate_message_log';
+  if ($callback !== NULL) {
+    $current_callback = $callback;
   }
-  return $is_interactive;
+  return $current_callback;
 }
 
 function _backup_migrate_check_timeout() {
@@ -880,3 +920,4 @@ function _backup_migrate_check_timeout() {
   }
   return (time() > $timeout);
 }
+
