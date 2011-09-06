@@ -22,7 +22,7 @@ class backup_migrate_destination_files extends backup_migrate_destination {
   /**
    * File save destination callback.
    */
-  function _save_file($file, $settings) {
+  function save_file($file, $settings) {
     if ($dir = $this->get_location()) {
       if ($this->check_dir($dir)) {
         $filepath = rtrim($dir, "/") ."/". $file->filename();
@@ -76,7 +76,7 @@ class backup_migrate_destination_files extends backup_migrate_destination {
   /**
    * File list destination callback.
    */
-  function _list_files() {
+  function list_files() {
     $files = array();
     if ($dir = $this->get_location()) {
       if ($handle = @opendir($dir)) {

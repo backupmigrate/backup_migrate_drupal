@@ -1,14 +1,12 @@
 <?php
 
 
-
 /**
  * @file
  * Create (manually or scheduled) and restore backups of your Drupal MySQL
  * database with an option to exclude table data (e.g. cache_*)
  */
 
-define('BACKUP_MIGRATE_VERSION', '6.x-2.x');
 define('BACKUP_MIGRATE_MENU_PATH', 'admin/content/backup_migrate');
 define('BACKUP_MIGRATE_MENU_DEPTH', 3);
 
@@ -958,45 +956,5 @@ function _backup_migrate_check_timeout() {
     $timeout = (!empty($_SERVER['REQUEST_TIME']) ? $_SERVER['REQUEST_TIME'] : time()) + ini_get('max_execution_time') - variable_get('backup_migrate_timeout_buffer', 5);
   }
   return (time() > $timeout);
-}
-
-/**
- * Convert an associated array to an ini format string.
- */
-function _backup_migrate_array_to_ini($data, $prefix = '') {
-  $content = ""; 
-  foreach ($data as $key => $val) {
-    if ($prefix) {
-      $key = $prefix . '[' . $key .']';
-    }
-    if (is_array($val)) {
-      $content .= _backup_migrate_array_to_ini($val, $key);
-    }
-    else {
-      $content .= $key . " = \"". $val ."\"\n";
-    }
-  }
-  return $content;
-}
-
-/**
- * Execute a command line command. Returns false if the function failed.
- */
-function backup_migrate_exec($command, $args = array()) {
-  if (!function_exists('exec') || ini_get('safe_mode')) {
-    return FALSE;
-  }
-
-  // Escape the arguments
-  foreach ($args as $key => $arg) {
-    $args[$key] = escapeshellarg($arg);
-  }
-  $command = strtr($command, $args);
-  $output = $result = NULL;
-
-  // Run the command.
-  exec($command . ' 2>&1', $output, $result);
-
-  return $result == 0;
 }
 

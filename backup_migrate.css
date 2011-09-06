@@ -23,10 +23,6 @@ div.backup-migrate-tables-checkboxes {
   height: 20em;
   overflow: auto;
 }
-div.backup-migrate-description {
-  font-size: smaller;
-}
-
 
 div.row-error {
   color: #FF0000;
