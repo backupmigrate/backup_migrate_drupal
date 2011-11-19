@@ -99,7 +99,7 @@ function _backup_migrate_ui_backup_settings_form($profile) {
       '#collapsed' => TRUE,
     );
     $form['file']['token_help']['help'] = array(
-      '#value' => theme('token_help', ''),
+      '#value' => theme('token_help', 'global'),
     );
     $form['file']['filename']['#description'] = t('You can use tokens in the file name.');
   }
