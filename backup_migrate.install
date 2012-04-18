@@ -388,14 +388,15 @@ function backup_migrate_update_2006() {
  * Update the schedule last run times to use variables instead of saving with the schedule.
  */
 function backup_migrate_update_6200() {
-  $result = db_query('SELECT * FROM {backup_migrate_schedules}', array(), array('fetch' => PDO::FETCH_ASSOC));
-  foreach ($result as $item) {
+  $ret = array();
+  $result = db_query('SELECT * FROM {backup_migrate_schedules}', array());
+  while ($item = db_fetch_array($result)) {
     if (isset($item['last_run'])) {
       variable_set('backup_migrate_schedule_last_run_' . $item['schedule_id'], $item['last_run']);
     }
   }
-  if (db_column_exists('backup_migrate_profiles', 'nodata_tables')) {
-    db_drop_field('backup_migrate_schedules', 'last_run');
+  if (db_column_exists('backup_migrate_schedules', 'last_run')) {
+    db_drop_field($ret, 'backup_migrate_schedules', 'last_run');
   }
   return $ret;
 }
