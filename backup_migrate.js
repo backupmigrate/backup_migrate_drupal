@@ -18,30 +18,18 @@ Drupal.backup_migrate = {
           $("div.backup-migrate-save-options").slideDown('slow');
         }
       });
-  
-      $('select[multiple]').after(
-        $('<div class="description backup-migrate-checkbox-link"></div>').append(
-          $('<a href="javascript:null;">').text(Drupal.settings.backup_migrate.checkboxLinkText).click(function() {
-            Drupal.backup_migrate.selectToCheckboxes($(this).parents('.form-item').find('select'));
-          })
-        )
+
+      $('select[multiple]').each(function() {
+          $(this).after(
+            $('<div class="description backup-migrate-checkbox-link"></div>').append(
+              $('<a href="javascript:null;"></a>').text(Drupal.settings.backup_migrate.checkboxLinkText).click(function() {
+                Drupal.backup_migrate.selectToCheckboxes($(this).parents('.form-item').find('select'));
+              })
+            )
+          );
+        }
       );
     }
-  },
-
-  processCheckboxes : function(ctxt) {
-    $("input.backup-migrate-tables-checkbox", ctxt).each(function() {
-      this.do_click = function() {
-        if (this.checked) {
-          $(this).parent().addClass('checked');
-        }
-        else {
-          $(this).parent().removeClass('checked');
-        }
-      };
-      $(this).bind("click", function() { this.do_click() });
-      this.do_click();
-    });
   },
 
   selectToCheckboxes : function($select) {
@@ -50,14 +38,19 @@ Drupal.backup_migrate = {
     $('option', $select).each(function(i) {
       var self = this;
       $box = $('<input type="checkbox" class="backup-migrate-tables-checkbox">').bind('change click', function() {
-        $select.find('option[value="'+self.value+'"]').attr('selected', $(this).attr('checked'));
+        $select.find('option[value="'+self.value+'"]').attr('selected', this.checked);
+        if (this.checked) {
+          $(this).parent().addClass('checked');
+        }
+        else {
+          $(this).parent().removeClass('checked');
+        }
       }).attr('checked', this.selected ? 'checked' : '');
       $checkboxes.append($('<div class="form-item"></div>').append($('<label class="option backup-migrate-table-select">'+this.value+'</label>').prepend($box)));
     });
     $select.parent().find('.backup-migrate-checkbox-link').remove();
     $select.before($checkboxes);
     $select.hide();
-    Drupal.backup_migrate.processCheckboxes($checkboxes);
   }
 }
 
