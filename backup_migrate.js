@@ -19,8 +19,13 @@ Drupal.backup_migrate = {
         }
       });
   
-      $('#edit-filters-exclude-tables').after('<div class="description backup-migrate-checkbox-link"><a href="javascript:Drupal.backup_migrate.selectToCheckboxes(\''+ 'exclude_tables' +'\');">'+ Drupal.settings.backup_migrate.checkboxLinkText +'</a></div>');
-      $('#edit-filters-nodata-tables').after('<div class="description backup-migrate-checkbox-link"><a href="javascript:Drupal.backup_migrate.selectToCheckboxes(\''+ 'nodata_tables' +'\');">'+ Drupal.settings.backup_migrate.checkboxLinkText +'</a></div>');
+      $('select[multiple]').after(
+        $('<div class="description backup-migrate-checkbox-link"></div>').append(
+          $('<a href="javascript:null;">').text(Drupal.settings.backup_migrate.checkboxLinkText).click(function() {
+            Drupal.backup_migrate.selectToCheckboxes($(this).parents('.form-item').find('select'));
+          })
+        )
+      );
     }
   },
 
@@ -39,12 +44,15 @@ Drupal.backup_migrate = {
     });
   },
 
-  selectToCheckboxes : function(field) {
-    var field_id = 'edit-filters-'+ field.replace('_', '-') ;
-    var $select = $('#'+ field_id);
+  selectToCheckboxes : function($select) {
+    var field_id = $select.attr('id');
     var $checkboxes = $('<div></div>').addClass('backup-migrate-tables-checkboxes');
     $('option', $select).each(function(i) {
-      $checkboxes.append('<div class="form-item"><label class="option backup-migrate-table-select"><input type="checkbox" class="backup-migrate-tables-checkbox" id="edit-'+ field_id +'-'+ this.value +'" name="'+ $select.attr('name') +'"'+ (this.selected ? 'checked="checked"' : '') +' value="'+ this.value +'"/>'+this.value+'</label></div>');
+      var self = this;
+      $box = $('<input type="checkbox" class="backup-migrate-tables-checkbox">').bind('change click', function() {
+        $select.find('option[value="'+self.value+'"]').attr('selected', $(this).attr('checked'));
+      }).attr('checked', this.selected ? 'checked' : '');
+      $checkboxes.append($('<div class="form-item"></div>').append($('<label class="option backup-migrate-table-select">'+this.value+'</label>').prepend($box)));
     });
     $select.parent().find('.backup-migrate-checkbox-link').remove();
     $select.before($checkboxes);
