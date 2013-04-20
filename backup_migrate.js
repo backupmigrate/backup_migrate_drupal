@@ -22,7 +22,7 @@ Drupal.backup_migrate = {
       $('select[multiple]').each(function() {
           $(this).after(
             $('<div class="description backup-migrate-checkbox-link"></div>').append(
-              $('<a href="javascript:null;"></a>').text(Drupal.settings.backup_migrate.checkboxLinkText).click(function() {
+              $('<a href="javascript:null(0);"></a>').text(Drupal.settings.backup_migrate.checkboxLinkText).click(function() {
                 Drupal.backup_migrate.selectToCheckboxes($(this).parents('.form-item').find('select'));
               })
             )
