@@ -407,3 +407,14 @@ function backup_migrate_update_7203() {
     db_drop_field('backup_migrate_schedules', 'last_run');
   }
 }
+
+
+
+/**
+ * Disable the NodeSquirrel module if it's installed
+ */
+function backup_migrate_update_7204() {
+  if (module_exists('nodesquirrel')) {
+    module_disable(array('nodesquirrel'));
+  }
+}
