@@ -48,7 +48,7 @@ function nodesquirrel_get_activate_help_text() {
     '#type' => 'item',
     '#title' => t('Need a Secret Key?'),
     '#markup' => t('Visit !nodesquirrel.', array('!nodesquirrel' => $activate_link)),
-    '#descriptoin' => t('Don\'t worry if you don\'t have an account yet. You can create one when you get there.'),
+    '#description' => t('Don\'t worry if you don\'t have an account yet. You can create one when you get there.'),
   );
 }
 
@@ -649,12 +649,6 @@ class backup_migrate_destination_nodesquirrel extends backup_migrate_destination
       $response .= $chunk;
     }
     fclose($fp);
-  
-  if (variable_get('debug_http_request', FALSE)) {
-    drupal_debug(date('r'));
-    drupal_debug($request);
-    drupal_debug($response);
-  }
   
     // Parse response.
     list($split, $result->data) = explode("\r\n\r\n", $response, 2);
