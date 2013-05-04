@@ -400,3 +400,14 @@ function backup_migrate_update_6200() {
   }
   return $ret;
 }
+
+
+
+/**
+ * Disable the NodeSquirrel module if it's installed
+ */
+function backup_migrate_update_7204() {
+  if (module_exists('nodesquirrel')) {
+    module_disable(array('nodesquirrel'));
+  }
+}
