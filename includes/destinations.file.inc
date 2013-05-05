@@ -192,6 +192,9 @@ class backup_migrate_destination_files extends backup_migrate_destination {
    * Check that a web accessible directory has been properly secured, othewise attempt to secure it.
    */
   function check_web_dir($directory) {
+    // If the directory is specified with an absolute path, strip the site root.
+    $directory = substr(realpath($directory), strlen(realpath($_SERVER['DOCUMENT_ROOT']) . base_path()));
+
     file_create_htaccess($directory, TRUE);
 
     // Check the user agent to make sure we're not responding to a request from drupal itself.
