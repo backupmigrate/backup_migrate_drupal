@@ -30,7 +30,7 @@ function backup_migrate_backup_migrate_destination_types() {
   if (!module_exists('nodesquirrel')) {
     $out += array(
       'nodesquirrel' => array(
-        'description' => t('!link is the cloud backup service for Drupal built by the maintainer of Backup and Migrate.', array('!link' => l(t('NodeSquirrel'), 'http://nodesquirrel.com'))),
+        'description' => t('!link is the cloud backup service by the maintainers of Backup and Migrate.', array('!link' => l(t('NodeSquirrel'), 'http://nodesquirrel.com'))),
         'file' => drupal_get_path('module', 'backup_migrate') .'/includes/destinations.nodesquirrel.inc',
         'class' => 'backup_migrate_destination_nodesquirrel',
         'type_name' => t('NodeSquirrel.com'),
@@ -41,7 +41,7 @@ function backup_migrate_backup_migrate_destination_types() {
   if (variable_get('backup_migrate_allow_backup_to_file', TRUE)) {
     $out += array(
       'file' => array(
-        'description' => t('Save the backup files to any directory on the server which the web-server can write to.'),
+        'description' => t('Save the backup files to any local directory the web server can write to.'),
         'file' => drupal_get_path('module', 'backup_migrate') .'/includes/destinations.file.inc',
         'class' => 'backup_migrate_destination_files',
         'type_name' => t('Server Directory'),
