@@ -406,7 +406,7 @@ function backup_migrate_update_6200() {
 /**
  * Disable the NodeSquirrel module if it's installed
  */
-function backup_migrate_update_7204() {
+function backup_migrate_update_6201() {
   if (module_exists('nodesquirrel')) {
     module_disable(array('nodesquirrel'));
   }
