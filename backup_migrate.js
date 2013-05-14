@@ -19,7 +19,7 @@ Drupal.backup_migrate = {
         }
       });
 
-      $('select[multiple]').each(function() {
+      $('#backup-migrate-ui-manual-backup-form select[multiple], #backup-migrate-crud-edit-form select[multiple]').each(function() {
           $(this).after(
             $('<div class="description backup-migrate-checkbox-link"></div>').append(
               $('<a href="javascript:null(0);"></a>').text(Drupal.settings.backup_migrate.checkboxLinkText).click(function() {
