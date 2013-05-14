@@ -404,10 +404,11 @@ function backup_migrate_update_6200() {
 
 
 /**
- * Disable the NodeSquirrel module if it's installed
+ * Disable the NodeSquirrel module if it's installed.
  */
 function backup_migrate_update_6201() {
   if (module_exists('nodesquirrel')) {
     module_disable(array('nodesquirrel'));
+    drupal_set_message(t("The NodeSquirrel module was disabled. NodeSquirrel support is now built into Backup and Migrate."));
   }
 }
