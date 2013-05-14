@@ -411,10 +411,13 @@ function backup_migrate_update_7203() {
 
 
 /**
- * Disable the NodeSquirrel module if it's installed
+ * Disable the NodeSquirrel module if it's installed.
  */
 function backup_migrate_update_7204() {
+  $ret = NULL;
   if (module_exists('nodesquirrel')) {
     module_disable(array('nodesquirrel'));
+    $ret = t("The NodeSquirrel module was disabled. NodeSquirrel support is now built into Backup and Migrate.");
   }
+  return $ret;
 }
