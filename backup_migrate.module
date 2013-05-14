@@ -144,8 +144,8 @@ function backup_migrate_menu() {
     'weight' => 1,
     'type' => MENU_LOCAL_TASK,
   );
-  $items[BACKUP_MIGRATE_MENU_PATH . '/cloud'] = array(
-      'title' => 'Cloud Backups',
+  $items[BACKUP_MIGRATE_MENU_PATH . '/nodesquirrel'] = array(
+      'title' => 'NodeSquirrel',
       'page callback' => 'backup_migrate_menu_callback',
       'page arguments' => array('destinations.nodesquirrel', 'nodesquirrel_settings_page'),
       'access arguments' => array('administer backup and migrate'),
