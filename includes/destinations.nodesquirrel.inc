@@ -81,7 +81,7 @@ function nodesquirrel_settings($form_state) {
 
   $form['intro'] = array(
     '#type' => 'markup',
-    '#markup' => t('<p>For better protection, back your site up regularly to a location not on your web server.</p> <p>!nodesquirrel is the cloud backup service built by the maintainers of Backup and Migrate. You can also !add such as FTP or Amazon S3. For more 3rd party options see the modules list on the !bam.', array('!nodesquirrel' => l(t('NodeSquirrel'), 'http://nodesquirrel.com'), '!add' => l(t('add another offsite destination'), BACKUP_MIGRATE_MENU_PATH . '/destination/list/add'), '!bam' => l(t('Backup and Migrate project page'), 'http://drupal.org/project/backup_migrate'))),
+    '#markup' => t('<p>For better protection, back your site up regularly to a location not on your web server. !nodesquirrel is the cloud backup service built by the maintainers of Backup and Migrate. You can also !add such as FTP or Amazon S3. Additional 3rd party options are available and many are listed on the !bam.', array('!nodesquirrel' => l(t('NodeSquirrel'), 'http://nodesquirrel.com'), '!add' => l(t('add other offsite destinations'), BACKUP_MIGRATE_MENU_PATH . '/destination/list/add'), '!bam' => l(t('Backup and Migrate project page'), 'http://drupal.org/project/backup_migrate'))),
     );
 
   $form['nodesquirrel_status'] = array(
