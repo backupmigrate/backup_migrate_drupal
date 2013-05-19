@@ -421,3 +421,25 @@ function backup_migrate_update_7204() {
   }
   return $ret;
 }
+
+
+/**
+ * Increase the length of all ids to 255.
+ */
+function backup_migrate_update_7205() {
+  $fields = array(
+    'backup_migrate_profiles' => array('profile_id'),
+    'backup_migrate_destinations' => array('destination_id'),
+    'backup_migrate_schedules' => array('schedule_id', 'source_id', 'destination_id', 'profile_id'),
+  );
+
+  $schema = backup_migrate_schema();
+
+  // Update the length of each of the ids
+  foreach ($fields as $table => $ids) {
+    foreach ($ids as $field) {
+      $spec = $schema[$table]['fields'][$field];
+      db_change_field($table, $field, $field, $spec);
+    }
+  }
+}
