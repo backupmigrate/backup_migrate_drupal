@@ -411,4 +411,28 @@ function backup_migrate_update_6201() {
     module_disable(array('nodesquirrel'));
     drupal_set_message(t("The NodeSquirrel module was disabled. NodeSquirrel support is now built into Backup and Migrate."));
   }
+  return array();
+}
+
+/**
+ * Increase the length of all ids to 255.
+ */
+function backup_migrate_update_6205() {
+  $fields = array(
+    'backup_migrate_profiles' => array('profile_id'),
+    'backup_migrate_destinations' => array('destination_id'),
+    'backup_migrate_schedules' => array('schedule_id', 'source_id', 'destination_id', 'profile_id'),
+  );
+
+  $ret = array();
+  $schema = backup_migrate_schema();
+
+  // Update the length of each of the ids
+  foreach ($fields as $table => $ids) {
+    foreach ($ids as $field) {
+      $spec = $schema[$table]['fields'][$field];
+      db_change_field($ret, $table, $field, $field, $spec);
+    }
+  }
+  return $ret;
 }
