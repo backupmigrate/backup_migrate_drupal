@@ -432,14 +432,21 @@ function backup_migrate_update_7205() {
     'backup_migrate_destinations' => array('destination_id'),
     'backup_migrate_schedules' => array('schedule_id', 'source_id', 'destination_id', 'profile_id'),
   );
+  $spec = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      );
 
   $schema = backup_migrate_schema();
 
   // Update the length of each of the ids
   foreach ($fields as $table => $ids) {
     foreach ($ids as $field) {
-      $spec = $schema[$table]['fields'][$field];
-      db_change_field($table, $field, $field, $spec);
+      if (db_field_exists($table, $field)) {
+        db_change_field($table, $field, $field, $spec);
+      }
     }
   }
 }
