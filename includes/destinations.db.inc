@@ -213,12 +213,7 @@ class backup_migrate_destination_db extends backup_migrate_destination_remote {
         }
       }
       if ($target && $key) {
-        try {
         $this->connection = Database::getConnection($target, $key);
-        }
-        catch (PDOException $e) {
-          return NULL;
-        }
       }
     }
     return $this->connection;
