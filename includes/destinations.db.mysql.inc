@@ -93,10 +93,10 @@ class backup_migrate_destination_db_mysql extends backup_migrate_destination_db 
         if (_backup_migrate_check_timeout()) {
           return FALSE;
         }
-        if ($table['Name'] && !isset($exclude[$table['Name']])) {
+        if ($table['Name'] && empty($exclude[$table['Name']])) {
           $file->write($this->_get_table_structure_sql($table));
           $lines++;
-          if (!in_array($table['Name'], $nodata)) {
+          if (empty($nodata[$table['Name']])) {
             $lines += $this->_dump_table_data_sql_to_file($file, $table);
           }
         }

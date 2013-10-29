@@ -6,6 +6,9 @@
  * Functions to handle the direct to database destination.
  */
 
+function _backup_migrate_destination_complete_table_list($element, &$form_state) {
+  form_set_value($element, array_merge(array_fill_keys($element['#options'], 0), $element['#value']), $form_state);
+}
 /**
  * A destination type for saving to a database server.
  *
@@ -87,7 +90,7 @@ class backup_migrate_destination_db extends backup_migrate_destination_remote {
         'devel_queries',
         'devel_times',
       );
-    $nodata_tables = array_merge($core, module_invoke_all('devel_caches'));
+    $nodata_tables = array_merge(array_combine($core, $core), module_invoke_all('devel_caches'));
      return array(
       'nodata_tables' => $nodata_tables,
       'exclude_tables' => array(),
@@ -106,7 +109,8 @@ class backup_migrate_destination_db extends backup_migrate_destination_remote {
       "#multiple" => TRUE,
       "#title" => t("Exclude the following tables altogether"),
       "#options" => $tables,
-      "#default_value" => $settings['exclude_tables'],
+      "#default_value" => array_filter($settings['exclude_tables']),
+      '#element_validate' => array('_backup_migrate_destination_complete_table_list'),
       "#description" => t("The selected tables will not be added to the backup file."),
     );
     $form['nodata_tables'] = array(
@@ -114,7 +118,8 @@ class backup_migrate_destination_db extends backup_migrate_destination_remote {
       "#multiple" => TRUE,
       "#title" => t("Exclude the data from the following tables"),
       "#options" => $tables,
-      "#default_value" => $settings['nodata_tables'],
+      "#default_value" => array_filter($settings['nodata_tables']),
+      '#element_validate' => array('_backup_migrate_destination_complete_table_list'),
       "#description" => t("The selected tables will have their structure backed up but not their contents. This is useful for excluding cache data to reduce file size."),
     );
     $form['utils_lock_tables'] = array(
