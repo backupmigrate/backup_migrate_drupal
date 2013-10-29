@@ -230,14 +230,12 @@ class backup_migrate_destination_db_mysql extends backup_migrate_destination_db 
   function _read_sql_command_from_file($file) {
     $out = '';
     while ($line = $file->read()) {
-      $first2 = substr($line, 0, 2);
-      $first3 = substr($line, 0, 2);
-
-      // Ignore single line comments. This function doesn't support multiline comments or inline comments.
-      if ($first2 != '--' && ($first2 != '/*' || $first3 == '/*!')) {
-        $out .= ' ' . trim($line);
+      $line = trim($line);
+      // Ignore single line comments.
+      if (!empty($line) && substr($line, 0, 2) != '--') {
+        $out .= ' ' . $line;
         // If a line ends in ; or */ it is a sql command.
-        if (substr($out, strlen($out) - 1, 1) == ';') {
+        if (substr($out, strlen($out) - 1, 1) == ';' || substr($out, strlen($out) - 2, 2) == '*/') {
           return trim($out);
         }
       }
