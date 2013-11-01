@@ -1079,3 +1079,31 @@ function backup_migrate_exec($command, $args = array()) {
   return $result == 0;
 }
 
+/**
+ * Implements hook_mail().
+ */
+function backup_migrate_mail($key, &$message, $params) {
+
+  switch($key) {
+    case 'backup_succeed':
+      $message['subject'] = t('!site backup succeeded', array('!site' => variable_get('site_name', 'Drupal')));
+      if ($params['messages']) {
+        $message['body'][] = t("The site backup has completed successfully with the following messages:");
+        $message['body'][] = t("!messages", array('!messages' => $params['messages']));
+      }
+      else {
+        $message['body'][] = t("The site backup has completed successfully.");
+      }
+      break;
+    case 'backup_fail':
+      $message['subject'] = t('!site backup failed', array('!site' => variable_get('site_name', 'Drupal')));
+      if ($params['messages']) {
+        $message['body'][] = t("The site backup has failed with the following messages:");
+        $message['body'][] = t("!messages", array('!messages' => $params['messages']));
+      }
+      else {
+        $message['body'][] = t("The site backup has failed for an unknown reason.");
+      }
+      break;
+  }
+}
