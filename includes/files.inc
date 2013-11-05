@@ -174,7 +174,7 @@ class backup_file {
     );
     if (file_exists($path)) {
       $params['filesize'] = filesize($path);
-      $params['filetime'] = filectime($path);
+      $params['filetime'] = filemtime($path);
     }
     $this->set_file_info($params);
   }
