@@ -1,0 +1,86 @@
+<?php
+use BackupMigrate\Core\Config\Config;
+
+require __DIR__.'/vendor/autoload.php';
+
+/**
+ * Back up a source to 1 or more destinations.
+ *
+ * @param string $source_id
+ * @param string|array $destination_id
+ * @param array $config
+ */
+function backup_migrate_perform_backup($source_id, $destination_id, $config = []) {
+  try {
+    // Create the service
+    $bam = backup_migrate_get_service_object($config);
+    // Run the backup.
+    $bam->backup($source_id, $destination_id);
+  }
+  catch (Exception $e) {
+    die ('Caught exception: ' . $e);
+  }
+}
+
+/**
+ * Get a BackupMigrate service object.
+ *
+ * @param array $config_array
+ *  The configuration as an array.
+ * @return \BackupMigrate\Core\Service\BackupMigrate
+ */
+function backup_migrate_get_service_object($config_array = []) {
+  static $bam = NULL;
+
+  // If the static cached object has not been loaded.
+  if ($bam === NULL) {
+
+    // Create the config object.
+    $conf = new \BackupMigrate\Core\Config\Config($config_array);
+
+    // Create the environment services.
+    $logger = new \BackupMigrate\Drupal\Environment\DrupalSetMessageLogger();
+    $files = new \BackupMigrate\Drupal\File\DrupalTempFileAdapter(\Drupal::service('file_system'), 'temporary://', 'bam');
+
+    // @TODO: Implement Drupal specific caching and state storage.
+    $cache = NULL;
+    $state = NULL;
+    $mailer = NULL;
+
+    // Bundle the services into an environment object
+    $env = new \BackupMigrate\Drupal\Environment\DrupalEnvironment($files, $cache, $state, $logger, $mailer);
+
+    // Create the service object.
+    $bam = new \BackupMigrate\Core\Service\BackupMigrate($env, $conf);
+
+    // Allow other modules to alter the object
+    \Drupal::moduleHandler()->alter('backup_migrate_service_object', $bam);
+  }
+  return $bam;
+}
+
+/**
+ * Implements hook_backup_migrate_service_object_alter().
+ *
+ * Add the core Backup and Migrate plugins to the service object.
+ *
+ * @param \BackupMigrate\Core\Service\BackupMigrate $bam
+ */
+function backup_migrate_backup_migrate_service_object_alter(\BackupMigrate\Core\Service\BackupMigrate &$bam) {
+  // Add the default database.
+  $info = \Drupal\Core\Database\Database::getConnectionInfo('default', 'default');
+  $info = $info['default'];
+  if ($info['driver'] == 'mysql') {
+    $bam->plugins()->add(
+      new \BackupMigrate\Core\Source\MySQLiSource(
+        new \BackupMigrate\Core\Config\Config($info)
+      ), 'db');
+  }
+
+  // Add a download destination.
+  $bam->plugins()->add(new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination(), 'download');
+
+  // Add a file naming filter.
+  $bam->plugins()->add(new \BackupMigrate\Core\Filter\FileNamer(), 'namer');
+
+}
