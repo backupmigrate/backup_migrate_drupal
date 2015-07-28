@@ -45,8 +45,24 @@ class DrupalConfigHelper {
           case 'text':
             $form_item['#type'] = 'textfield';
             break;
+          case 'password':
+            $form_item['#type'] = 'password';
+            break;
+          case 'number':
+            $form_item['#type'] = 'textfield';
+            $form_item['#size'] = 5;
+            if (!empty($item['max'])) {
+              $form_item['#size'] = strlen((string)$item['max']) + 3;
+            }
+
+            break;
           case 'boolean':
             $form_item['#type'] = 'checkbox';
+            break;
+          case 'enum':
+            $form_item['#type'] = 'select';
+            $form_item['#multiple'] = !empty($item['multiple']);
+            $form_item['#options'] = $item['options'];
             break;
         }
 
