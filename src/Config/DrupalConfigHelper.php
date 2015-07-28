@@ -7,6 +7,8 @@
 
 namespace BackupMigrate\Drupal\Config;
 
+use BackupMigrate\Core\Config\ConfigInterface;
+
 
 /**
  * Class DrupalConfigHelper
@@ -17,41 +19,62 @@ class DrupalConfigHelper {
   /**
    * @param array $schema
    *  A configuration schema from one or more Backup and Migrate plugins.
-   * @param array $values
+   * @param \BackupMigrate\Core\Config\ConfigInterface $config
+   * @return array
    */
-  static public function buildFormFromSchema($schema, $values = array()) {
+  static public function buildFormFromSchema($schema, ConfigInterface $config) {
     $form = array();
 
+    foreach ($schema as $plugin_key => $plugin_schema) {
+      // Get the configuration for the plugin to use as the form default values.
+      $plugin_config = $config->get($plugin_key);
 
-    foreach ($schema['fields'] as $key => $item) {
-      $form_item = array();
-      switch ($item['type']) {
-        case 'text':
-          $form_item['#type'] = 'textfield';
-          break;
-        case 'boolean':
-          $form_item['#type'] = 'checkbox';
-          break;
+      // Add the specified groups.
+      foreach ($plugin_schema['groups'] as $group_key => $item) {
+        $form[$group_key] = [
+          '#type' => 'fieldset',
+          '#title' => $item['title'],
+          '#tree' => FALSE,
+        ];
       }
 
-      // If there is a form item add it to the form.
-      if ($form_item) {
-        // Add the common form elements.
-        $form_item['#title'] = $item['title'];
-        $form_item['#default_value'] = isset($values) ? $values : $item['default'];
+      // Add each of the fields.
+      foreach ($plugin_schema['fields'] as $field_key => $item) {
+        $form_item = array();
+        switch ($item['type']) {
+          case 'text':
+            $form_item['#type'] = 'textfield';
+            break;
+          case 'boolean':
+            $form_item['#type'] = 'checkbox';
+            break;
+        }
 
-        $form[$key] = $form_item;
+        // If there is a form item add it to the form.
+        if ($form_item) {
+          // Add the common form elements.
+          $form_item['#title'] = $item['title'];
+          $form_item['#default_value'] = $plugin_config->get($field_key);
+          $form_item['#parents'] = array($plugin_key, $field_key);
+          $form_item['#required'] = !empty($item['required']);
+
+          if (!empty($item['description'])) {
+            $form_item['#description'] = $item['description'];
+          }
+
+
+          // Add the field to it's group or directly to the top level of the form.
+          if (!empty($item['group'])) {
+            $form[$item['group']][$field_key] = $form_item;
+          }
+          else {
+            $form[$field_key] = $form_item;
+          }
+        }
       }
     }
 
     return $form;
   }
 
-  /**
-   * @param $schema
-   * @param $values
-   */
-  static public function validateFormFromSchema($schema, $values) {
-
-  }
 }

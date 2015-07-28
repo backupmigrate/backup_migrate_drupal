@@ -42,12 +42,9 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
       "#tree" => FALSE,
     );
 
-//    $values = $form_state['values'];
-
     $bam = backup_migrate_get_service_object();
-
-    $conf_schema = $bam->plugins()->call('configSchema', array(), array('operation' => 'backup'));
-    $form += DrupalConfigHelper::buildFormFromSchema($conf_schema, $values);
+    $conf_schema = $bam->plugins()->map('configSchema', array('operation' => 'backup'));
+    $form += DrupalConfigHelper::buildFormFromSchema($conf_schema, $bam->plugins()->config());
 
     // $form['quickbackup']['source_id'] = _backup_migrate_get_source_pulldown(\Drupal::config('backup_migrate.settings')->get('backup_migrate_source_id'));
     // $form['quickbackup']['destination'] = _backup_migrate_get_destination_pulldown('manual backup', \Drupal::config('backup_migrate.settings')->get('backup_migrate_destination_id'), \Drupal::config('backup_migrate.settings')->get('backup_migrate_copy_destination_id'));
@@ -67,15 +64,23 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
-    $conf_schema = $bam->plugins()->call('configSchema', array(), array('operation' => 'backup'));
-    DrupalConfigHelper::validateFormFromSchema($conf_schema, $form_state['values']);
+    $bam = backup_migrate_get_service_object($form_state->getValues());
+
+    // Let the plugins validate their own config data.
+    if ($plugin_errors = $bam->plugins()->map('configErrors', array('operation' => 'backup'))) {
+      foreach ($plugin_errors as $plugin_key => $errors) {
+        foreach ($errors as $error) {
+          $form_state->setErrorByName($plugin_key . '][' . $error->getFieldKey(), $this->t($error->getMessage(), $error->getReplacement()));
+        }
+      }
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $form_state['values'];
+    $config = $form_state->getValues();
     backup_migrate_perform_backup('db', 'download', $config);
   }
 

@@ -56,6 +56,10 @@ function backup_migrate_get_service_object($config_array = []) {
     // Allow other modules to alter the object
     \Drupal::moduleHandler()->alter('backup_migrate_service_object', $bam);
   }
+  else if ($config_array) {
+    $bam->setConfig(new \BackupMigrate\Core\Config\Config($config_array));
+  }
+
   return $bam;
 }
 
