@@ -34,6 +34,11 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
     // @FIXME
     // $form['#theme'] = 'backup_migrate_ui_manual_quick_backup_form_inline';
 
+
+    // $form['quickbackup']['destination'] = _backup_migrate_get_destination_pulldown('manual backup', \Drupal::config('backup_migrate.settings')->get('backup_migrate_destination_id'), \Drupal::config('backup_migrate.settings')->get('backup_migrate_copy_destination_id'));
+
+    $bam = backup_migrate_get_service_object();
+
     $form['source'] = array(
       '#type' => 'fieldset',
       "#title" => t("Source"),
@@ -41,13 +46,22 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
       "#collapsed" => FALSE,
       "#tree" => FALSE,
     );
+    $form['source']['source_id'] = _backup_migrate_get_source_pulldown($bam);
+    $form['source']['source_id']['#default_value'] = \Drupal::config('backup_migrate.settings')->get('backup_migrate_source_id');
 
-    $bam = backup_migrate_get_service_object();
+
     $conf_schema = $bam->plugins()->map('configSchema', array('operation' => 'backup'));
     $form += DrupalConfigHelper::buildFormFromSchema($conf_schema, $bam->plugins()->config());
 
-    // $form['quickbackup']['source_id'] = _backup_migrate_get_source_pulldown(\Drupal::config('backup_migrate.settings')->get('backup_migrate_source_id'));
-    // $form['quickbackup']['destination'] = _backup_migrate_get_destination_pulldown('manual backup', \Drupal::config('backup_migrate.settings')->get('backup_migrate_destination_id'), \Drupal::config('backup_migrate.settings')->get('backup_migrate_copy_destination_id'));
+    $form['destination'] = array(
+      '#type' => 'fieldset',
+      "#title" => t("Destination"),
+      "#collapsible" => TRUE,
+      "#collapsed" => FALSE,
+      "#tree" => FALSE,
+    );
+    $form['destination']['destination_id'] = _backup_migrate_get_destination_pulldown($bam);
+    $form['destination']['destination_id']['#default_value'] = \Drupal::config('backup_migrate.settings')->get('backup_migrate_destination_id');
 
     $form['quickbackup']['submit'] = array(
       '#type' => 'submit',
@@ -81,7 +95,7 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $form_state->getValues();
-    backup_migrate_perform_backup('db', 'download', $config);
+    backup_migrate_perform_backup($config['source_id'], 'download', $config);
   }
 
 

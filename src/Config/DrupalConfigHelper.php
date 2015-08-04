@@ -44,6 +44,10 @@ class DrupalConfigHelper {
         switch ($item['type']) {
           case 'text':
             $form_item['#type'] = 'textfield';
+            if (!empty($item['multiple'])) {
+              $form_item['#type'] = 'textarea';
+              $item['description'] .= t(' Add one item per line.');
+            }
             break;
           case 'password':
             $form_item['#type'] = 'password';

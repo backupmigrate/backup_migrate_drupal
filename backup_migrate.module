@@ -60,7 +60,7 @@ function backup_migrate_get_service_object($config_array = []) {
 
   // Set the configuration overrides if any were passed in.
   if ($config_array) {
-    $bam->setConfig(new \BackupMigrate\Core\Config\Config($config_array));
+    $bam->setConfig(new Config($config_array));
   }
 
   return $bam;
@@ -88,6 +88,8 @@ function backup_migrate_backup_migrate_services_alter(\BackupMigrate\Core\Servic
     new \BackupMigrate\Drupal\Environment\DrupalSetMessageLogger()
   );
 
+  $services->add('ArchiveWriter', new \BackupMigrate\Core\Service\PearTarArchiver());
+
 }
 
 
@@ -106,10 +108,14 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
   if ($info['driver'] == 'mysql') {
     $plugins->add(
       'db',
-      new \BackupMigrate\Core\Source\MySQLiSource(
-        new \BackupMigrate\Core\Config\Config($info)
-      ));
+      new \BackupMigrate\Core\Source\MySQLiSource(new Config($info)));
   }
+
+  // Add the public files
+  $plugins->add(
+    'files_public',
+    new \BackupMigrate\Core\Source\FileDirectorySource(new Config(['directory' => 'public://']))
+  );
 
   // Add a download destination.
   $plugins->add('download', new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination());
@@ -142,4 +148,38 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
 //    ), 'files_public');
 
 
+}
+
+/**
+ * @param \BackupMigrate\Core\Main\BackupMigrate $bam
+ * @return array
+ */
+function _backup_migrate_get_source_pulldown(\BackupMigrate\Core\Main\BackupMigrate $bam) {
+  $sources = $bam->plugins()->getAllByOp('exportToFile');
+  $source_ids = array();
+  foreach ($sources as $key => $source) {
+    $source_ids[$key] = $key;
+  }
+  return [
+    '#type' => 'select',
+    '#title' => t('Source'),
+    '#options' => $source_ids,
+  ];
+}
+
+/**
+ * @param \BackupMigrate\Core\Main\BackupMigrate $bam
+ * @return array
+ */
+function _backup_migrate_get_destination_pulldown(\BackupMigrate\Core\Main\BackupMigrate $bam) {
+  $destinations = $bam->plugins()->getAllByOp('saveFile');
+  $destination_ids = array();
+  foreach ($destinations as $key => $destination) {
+    $destination_ids[$key] = $key;
+  }
+  return [
+    '#type' => 'select',
+    '#title' => t('Destination'),
+    '#options' => $destination_ids,
+  ];
 }
