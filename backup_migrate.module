@@ -105,16 +105,17 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
   $info = $info['default'];
   if ($info['driver'] == 'mysql') {
     $plugins->add(
+      'db',
       new \BackupMigrate\Core\Source\MySQLiSource(
         new \BackupMigrate\Core\Config\Config($info)
-      ), 'db');
+      ));
   }
 
   // Add a download destination.
-  $plugins->add(new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination(), 'download');
+  $plugins->add('download', new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination());
 
   // Add a file naming filter.
-  $plugins->add(new \BackupMigrate\Core\Filter\FileNamer(), 'namer');
+  $plugins->add('namer', new \BackupMigrate\Core\Filter\FileNamer());
 
   // Add an S3 destination.
 //  $bam->plugins()->add(
