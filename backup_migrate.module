@@ -88,7 +88,7 @@ function backup_migrate_backup_migrate_services_alter(\BackupMigrate\Core\Servic
     new \BackupMigrate\Drupal\Environment\DrupalSetMessageLogger()
   );
 
-  $services->add('ArchiveWriter', new \BackupMigrate\Core\Service\PearTarArchiver());
+  $services->add('Archiver', new \BackupMigrate\Core\Service\PearTarArchiver());
 
 }
 
