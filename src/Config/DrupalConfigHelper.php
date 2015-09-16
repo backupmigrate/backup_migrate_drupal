@@ -8,6 +8,7 @@
 namespace BackupMigrate\Drupal\Config;
 
 use BackupMigrate\Core\Config\ConfigInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 
 /**
@@ -31,11 +32,13 @@ class DrupalConfigHelper {
 
       // Add the specified groups.
       foreach ($plugin_schema['groups'] as $group_key => $item) {
-        $form[$group_key] = [
-          '#type' => 'fieldset',
-          '#title' => $item['title'],
-          '#tree' => FALSE,
-        ];
+        if (!isset($form[$group_key])) {
+          $form[$group_key] = [
+            '#type' => 'fieldset',
+            '#title' => $item['title'],
+            '#tree' => FALSE,
+          ];
+        }
       }
 
       // Add each of the fields.
@@ -46,7 +49,11 @@ class DrupalConfigHelper {
             $form_item['#type'] = 'textfield';
             if (!empty($item['multiple'])) {
               $form_item['#type'] = 'textarea';
-              $item['description'] .= t(' Add one item per line.');
+              $form_item['#description'] .= ' ' . t('Add one item per line.');
+              $form_item['#element_validate'] = [[new DrupalConfigHelper, 'validateMultiText']];
+            }
+            if (!empty($item['multiline'])) {
+              $form_item['#type'] = 'textarea';
             }
             break;
           case 'password':
@@ -97,4 +104,13 @@ class DrupalConfigHelper {
     return $form;
   }
 
+  /**
+   * Break a multi-line text value into an array.
+   *
+   * @param $element
+   * @param $form_state
+   */
+  public static function validateMultiText(&$element, FormStateInterface &$form_state) {
+    $form_state->setValueForElement($element, array_map('trim', explode("\n", $element['#value'])));
+  }
 }

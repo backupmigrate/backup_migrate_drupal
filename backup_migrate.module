@@ -3,6 +3,9 @@ use BackupMigrate\Core\Config\Config;
 
 require __DIR__.'/vendor/autoload.php';
 
+define('BACKP_MIGRATE_MODULE_VERSION', '8.x-4.x-dev');
+
+
 /**
  * Back up a source to 1 or more destinations.
  *
@@ -79,6 +82,11 @@ function backup_migrate_backup_migrate_services_alter(\BackupMigrate\Core\Servic
   $services->add('TempFileAdapter',
     new \BackupMigrate\Drupal\File\DrupalTempFileAdapter(\Drupal::service('file_system'), 'temporary://', 'bam')
   );
+//  $services->add('TempFileAdapter',
+//    new \BackupMigrate\Core\File\TempFileAdapter('/tmp/', 'bam')
+//  );
+//
+
   $services->add('TempFileManager',
     new \BackupMigrate\Core\File\TempFileManager($services->get('TempFileAdapter'))
   );
@@ -89,6 +97,7 @@ function backup_migrate_backup_migrate_services_alter(\BackupMigrate\Core\Servic
   );
 
   $services->add('Archiver', new \BackupMigrate\Core\Service\PearTarArchiver());
+  $services->add('ArchiveWriter', new \BackupMigrate\Core\Service\TarArchiveWriter());
 
 }
 
@@ -106,9 +115,11 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
   $info = \Drupal\Core\Database\Database::getConnectionInfo('default', 'default');
   $info = $info['default'];
   if ($info['driver'] == 'mysql') {
-    $plugins->add(
-      'db',
-      new \BackupMigrate\Core\Source\MySQLiSource(new Config($info)));
+    $db = new \BackupMigrate\Core\Source\MySQLiSource(new Config($info));
+    $plugins->add('db', $db);
+
+    // Add the entire site
+    $plugins->add('site', new \BackupMigrate\Drupal\Source\DrupalSiteArchiveSource(new Config(['directory' => DRUPAL_ROOT]), $db));
   }
 
   // Add the public files
@@ -117,11 +128,34 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
     new \BackupMigrate\Core\Source\FileDirectorySource(new Config(['directory' => 'public://']))
   );
 
+
   // Add a download destination.
   $plugins->add('download', new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination());
 
+  // Add a directory destination.
+  $plugins->add('public', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['directory' => 'public://backups/'])));
+  // Add a private directory destination.
+  $plugins->add('private', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['directory' => 'private://backups/'])));
+
+  // Add a debug destination.
+  $plugins->add('debug', new \BackupMigrate\Core\Destination\DebugDestination(new Config(['format' => 'html'])));
+
   // Add a file naming filter.
   $plugins->add('namer', new \BackupMigrate\Core\Filter\FileNamer());
+
+  // Add the Drupal utilities filter.
+  $plugins->add('utils', new \BackupMigrate\Drupal\Filter\DrupalUtils());
+
+  // Add a file metadata filter.
+  $plugins->add('metadata', new \BackupMigrate\Core\Filter\MetadataWriter(
+    new Config([
+      'generator' => 'Backup and Migrate for Drupal (https://www.drupal.org/project/backup_migrate)',
+      'generatorurl' => 'https://www.drupal.org/project/backup_migrate',
+      'generatorversion' => BACKP_MIGRATE_MODULE_VERSION
+    ])
+  ));
+
+
 
   // Add an S3 destination.
 //  $bam->plugins()->add(
