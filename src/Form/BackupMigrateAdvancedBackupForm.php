@@ -95,7 +95,7 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $form_state->getValues();
-    backup_migrate_perform_backup($config['source_id'], 'download', $config);
+    backup_migrate_perform_backup($config['source_id'], $config['destination_id'], $config);
   }
 
 
