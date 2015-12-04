@@ -1,0 +1,20 @@
+backup_migrate.quick_backup:
+  title: Backup
+  route_name: backup_migrate.quick_backup
+  base_route: backup_migrate.quick_backup
+
+backup_migrate.restore:
+  title: Restore
+  route_name: backup_migrate.restore
+  base_route: backup_migrate.quick_backup
+
+backup_migrate.quick_backup_sub:
+  title: Quick Backup
+  route_name: backup_migrate.quick_backup
+  parent_id: backup_migrate.quick_backup
+
+backup_migrate.advanced_backup:
+  title: Advanced Backup
+  route_name: backup_migrate.advanced_backup
+  parent_id: backup_migrate.quick_backup
+
