@@ -50,6 +50,13 @@ class BackupMigrateQuickBackupForm extends FormBase {
       $bam->plugins()->getAllByOp('saveFile'), t('Backup Destination'));
 
 
+    // Create the service
+//    $bam = backup_migrate_get_service_object($config);
+//    $bam->plugins()->get('namer')->confGet('filename');
+
+    // $form['quickbackup']['source_id'] = _backup_migrate_get_source_pulldown(\Drupal::config('backup_migrate.settings')->get('backup_migrate_source_id'));
+    // $form['quickbackup']['destination'] = _backup_migrate_get_destination_pulldown('manual backup', \Drupal::config('backup_migrate.settings')->get('backup_migrate_destination_id'), \Drupal::config('backup_migrate.settings')->get('backup_migrate_copy_destination_id'));
+
     $form['quickbackup']['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Backup now'),

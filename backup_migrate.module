@@ -22,7 +22,7 @@ function backup_migrate_perform_backup($source_id, $destination_id, $config = []
     $bam->backup($source_id, $destination_id);
   }
   catch (Exception $e) {
-    die ('Caught exception: ' . $e);
+    drupal_set_message($e->getMessage(), 'error');
   }
 }
 
@@ -115,33 +115,34 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
   $info = \Drupal\Core\Database\Database::getConnectionInfo('default', 'default');
   $info = $info['default'];
   if ($info['driver'] == 'mysql') {
-    $db = new \BackupMigrate\Core\Source\MySQLiSource(new Config($info));
+    $db = new \BackupMigrate\Core\Source\MySQLiSource(new Config($info + ['name' => t('Default Database')]));
     $plugins->add('db', $db);
 
     // Add the entire site
-    $plugins->add('site', new \BackupMigrate\Drupal\Source\DrupalSiteArchiveSource(new Config(['directory' => DRUPAL_ROOT]), $db));
+    $plugins->add('site', new \BackupMigrate\Drupal\Source\DrupalSiteArchiveSource(new Config(['name' => t('Entire Site'), 'directory' => DRUPAL_ROOT]), $db));
   }
 
   // Add the public files
   $plugins->add(
     'files_public',
-    new \BackupMigrate\Core\Source\FileDirectorySource(new Config(['directory' => 'public://']))
+    new \BackupMigrate\Core\Source\FileDirectorySource(new Config(['name' => t('Public Files Directory'), 'directory' => 'public://']))
   );
 
 
   // Add a download destination.
   $plugins->add('download', new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination());
 
-  // Add a directory destination.
-  $plugins->add('public', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['directory' => 'public://backups/'])));
   // Add a private directory destination.
-  $plugins->add('private', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['directory' => 'private://backups/'])));
+  $plugins->add('private', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['name' => t('Private Files Directory'), 'directory' => 'private://backup_migrate/'])));
 
   // Add a debug destination.
-  $plugins->add('debug', new \BackupMigrate\Core\Destination\DebugDestination(new Config(['format' => 'html'])));
+  // $plugins->add('debug', new \BackupMigrate\Core\Destination\DebugDestination(new Config(['format' => 'html'])));
 
   // Add a file naming filter.
   $plugins->add('namer', new \BackupMigrate\Core\Filter\FileNamer());
+
+  // Add a compression filter
+  $plugins->add('compressor', new \BackupMigrate\Core\Filter\CompressionFilter());
 
   // Add the Drupal utilities filter.
   $plugins->add('utils', new \BackupMigrate\Drupal\Filter\DrupalUtils());

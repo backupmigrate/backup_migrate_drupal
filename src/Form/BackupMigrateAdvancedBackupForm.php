@@ -32,10 +32,7 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
     // Theme the form if we want it inline.
     // @FIXME
     // $form['#theme'] = 'backup_migrate_ui_manual_quick_backup_form_inline';
-
-
-    // $form['quickbackup']['destination'] = _backup_migrate_get_destination_pulldown('manual backup', \Drupal::config('backup_migrate.settings')->get('backup_migrate_destination_id'), \Drupal::config('backup_migrate.settings')->get('backup_migrate_copy_destination_id'));
-
+    
     $bam = backup_migrate_get_service_object();
 
     $form['source'] = array(

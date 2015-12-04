@@ -73,6 +73,9 @@ class DrupalConfigHelper {
           case 'enum':
             $form_item['#type'] = 'select';
             $form_item['#multiple'] = !empty($item['multiple']);
+            if (empty($item['#required']) && empty($item['multiple'])) {
+              $item['options'] = array('' => '--' . t('None') . '--') + $item['options'];
+            }
             $form_item['#options'] = $item['options'];
             break;
         }
@@ -116,13 +119,14 @@ class DrupalConfigHelper {
 
   /**
    * Get a pulldown for the given list of plugins
-   * @param $plugins
+   *
+   * @param \BackupMigrate\Core\Config\ConfigurableInterface[] $plugins
    * @return array
    */
   public static function getPluginSelector($plugins, $title) {
     $options = array();
     foreach ($plugins as $key => $plugin) {
-      $options[$key] = $key;
+      $options[$key] = $plugin->confGet('name', $key);
     }
     return [
       '#type' => 'select',
