@@ -1,0 +1,24 @@
+backup_migrate.quick_backup:
+  path: '/admin/config/development/backup_migrate'
+  defaults:
+    _form: '\Drupal\backup_migrate\Form\BackupMigrateQuickBackupForm'
+    _title: 'Backup and Migrate'
+  requirements:
+    _permission: 'perform backup'
+
+backup_migrate.advanced_backup:
+  path: '/admin/config/development/backup_migrate/advanced'
+  defaults:
+    _form: '\Drupal\backup_migrate\Form\BackupMigrateAdvancedBackupForm'
+    _title: 'Advanced Backup'
+  requirements:
+    _permission: 'perform backup'
+
+backup_migrate.restore:
+   path: '/admin/config/development/backup_migrate/restore'
+   defaults:
+     _form: '\Drupal\backup_migrate\Form\BackupMigrateRestoreForm'
+     _title: 'Restore'
+   requirements:
+     _permission: 'restore from backup'
+

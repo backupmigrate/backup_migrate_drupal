@@ -1,0 +1,50 @@
+# Schema for configuration files of the Backup and Migrate module.
+
+backup_migrate.profile.*:
+  type: config_entity
+  label: 'Backup and Migrate settings profile'
+  mapping:
+    name:
+      type: string
+    label:
+      type: label
+      label: 'Label'
+    label:
+      type: string
+      label: 'Filename'
+    append_timestamp:
+      type: boolean
+      label: 'Append Timestamp'
+    timestamp_format:
+      type: string
+      label: 'Timestamp Format'
+
+backup_migrate.schedule.*:
+  type: config_entity
+  label: 'Backup and Migrate schedule'
+  mapping:
+    name:
+      type: string
+    label:
+      type: label
+      label: 'Label'
+
+backup_migrate.source.*:
+  type: config_entity
+  label: 'Backup and Migrate backup source'
+  mapping:
+    name:
+      type: string
+    label:
+      type: label
+      label: 'Label'
+
+backup_migrate.destination.*:
+  type: config_entity
+  label: 'Backup and Migrate backup destination'
+  mapping:
+    name:
+      type: string
+    label:
+      type: label
+      label: 'Label'

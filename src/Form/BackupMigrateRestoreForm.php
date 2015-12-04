@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * @file
+ * Contains \Drupal\backup_migrate\Form\BackupMigrateQuickBackupForm.
+ */
+
+namespace Drupal\backup_migrate\Form;
+
+use BackupMigrate\Drupal\Config\DrupalConfigHelper;
+use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Provides a form for performing a 1-click site backup.
+ */
+class BackupMigrateRestoreForm extends FormBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return 'backup_migrate_ui_manual_backup_quick';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $form = array();
+
+    $bam = backup_migrate_get_service_object();
+
+    $form['quickbackup'] = array(
+      '#type' => 'fieldset',
+      "#title" => t("Restore"),
+      "#collapsible" => FALSE,
+      "#collapsed" => FALSE,
+      "#tree" => FALSE,
+    );
+
+    $form['quickbackup']['source_id'] = DrupalConfigHelper::getPluginSelector(
+      $bam->plugins()->getAllByOp('importFromFile'), t('Restore To'));
+
+    $form['quickbackup']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Restore now'),
+      '#weight' => 1,
+    );
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+//    $config = $form_state->getValues();
+//    backup_migrate_perform_backup($config['source_id'], $config['destination_id']);
+  }
+
+
+}
