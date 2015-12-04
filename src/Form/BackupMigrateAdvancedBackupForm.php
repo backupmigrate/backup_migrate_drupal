@@ -8,7 +8,6 @@
 namespace Drupal\backup_migrate\Form;
 
 use BackupMigrate\Drupal\Config\DrupalConfigHelper;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -46,7 +45,9 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
       "#collapsed" => FALSE,
       "#tree" => FALSE,
     );
-    $form['source']['source_id'] = _backup_migrate_get_source_pulldown($bam);
+    $form['source']['source_id'] = DrupalConfigHelper::getPluginSelector(
+        $bam->plugins()->getAllByOp('exportToFile'), t('Backup Source'));
+
     $form['source']['source_id']['#default_value'] = \Drupal::config('backup_migrate.settings')->get('backup_migrate_source_id');
 
 
@@ -60,7 +61,10 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
       "#collapsed" => FALSE,
       "#tree" => FALSE,
     );
-    $form['destination']['destination_id'] = _backup_migrate_get_destination_pulldown($bam);
+
+    $form['destination']['destination_id'] = DrupalConfigHelper::getPluginSelector(
+      $bam->plugins()->getAllByOp('saveFile'), t('Backup Destination'));
+
     $form['destination']['destination_id']['#default_value'] = \Drupal::config('backup_migrate.settings')->get('backup_migrate_destination_id');
 
     $form['quickbackup']['submit'] = array(

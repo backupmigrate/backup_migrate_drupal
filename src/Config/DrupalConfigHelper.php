@@ -113,4 +113,21 @@ class DrupalConfigHelper {
   public static function validateMultiText(&$element, FormStateInterface &$form_state) {
     $form_state->setValueForElement($element, array_map('trim', explode("\n", $element['#value'])));
   }
+
+  /**
+   * Get a pulldown for the given list of plugins
+   * @param $plugins
+   * @return array
+   */
+  public static function getPluginSelector($plugins, $title) {
+    $options = array();
+    foreach ($plugins as $key => $plugin) {
+      $options[$key] = $key;
+    }
+    return [
+      '#type' => 'select',
+      '#title' => $title,
+      '#options' => $options,
+    ];
+  }
 }

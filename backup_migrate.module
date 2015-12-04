@@ -183,37 +183,3 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
 
 
 }
-
-/**
- * @param \BackupMigrate\Core\Main\BackupMigrate $bam
- * @return array
- */
-function _backup_migrate_get_source_pulldown(\BackupMigrate\Core\Main\BackupMigrate $bam) {
-  $sources = $bam->plugins()->getAllByOp('exportToFile');
-  $source_ids = array();
-  foreach ($sources as $key => $source) {
-    $source_ids[$key] = $key;
-  }
-  return [
-    '#type' => 'select',
-    '#title' => t('Source'),
-    '#options' => $source_ids,
-  ];
-}
-
-/**
- * @param \BackupMigrate\Core\Main\BackupMigrate $bam
- * @return array
- */
-function _backup_migrate_get_destination_pulldown(\BackupMigrate\Core\Main\BackupMigrate $bam) {
-  $destinations = $bam->plugins()->getAllByOp('saveFile');
-  $destination_ids = array();
-  foreach ($destinations as $key => $destination) {
-    $destination_ids[$key] = $key;
-  }
-  return [
-    '#type' => 'select',
-    '#title' => t('Destination'),
-    '#options' => $destination_ids,
-  ];
-}
