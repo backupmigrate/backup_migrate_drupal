@@ -32,16 +32,18 @@ class BackupMigrateRestoreForm extends FormBase {
 
     $bam = backup_migrate_get_service_object();
 
-    $form['quickbackup'] = array(
-      '#type' => 'fieldset',
-      "#title" => t("Restore"),
-      "#collapsible" => FALSE,
-      "#collapsed" => FALSE,
-      "#tree" => FALSE,
+    $form['backup_migrate_restore_upload'] = array(
+      '#title' => t('Upload a Backup File'),
+      '#type' => 'file',
+      '#description' => t("Upload a backup file created by Backup and Migrate. For other database or file backups please use another tool for import. Max file size: %size", array("%size" => format_size(file_upload_max_size()))),
     );
 
-    $form['quickbackup']['source_id'] = DrupalConfigHelper::getPluginSelector(
-      $bam->plugins()->getAllByOp('importFromFile'), t('Restore To'));
+    $form['source_id'] = DrupalConfigHelper::getPluginSelector(
+      $bam->plugins()->getAllByOp('importFromFile'), $this->t('Restore To'));
+
+
+    $conf_schema = $bam->plugins()->map('configSchema', array('operation' => 'restore'));
+    $form += DrupalConfigHelper::buildFormFromSchema($conf_schema, $bam->plugins()->config());
 
     $form['quickbackup']['submit'] = array(
       '#type' => 'submit',
@@ -63,8 +65,8 @@ class BackupMigrateRestoreForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-//    $config = $form_state->getValues();
-//    backup_migrate_perform_backup($config['source_id'], $config['destination_id']);
+    $config = $form_state->getValues();
+    backup_migrate_perform_restore($config['source_id'], 'upload', 'backup_migrate_restore_upload', $config);
   }
 
 

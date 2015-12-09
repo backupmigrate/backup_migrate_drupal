@@ -20,9 +20,34 @@ function backup_migrate_perform_backup($source_id, $destination_id, $config = []
 
     // Run the backup.
     $bam->backup($source_id, $destination_id);
+    drupal_set_message('Backup Complete.');
   }
   catch (Exception $e) {
     drupal_set_message($e->getMessage(), 'error');
+  }
+}
+
+
+/**
+ * Restore a source from a destination and file id
+ *
+ * @param string $source_id
+ * @param string|array $destination_id
+ * @parem string $file_id
+ * @param array $config
+ */
+function backup_migrate_perform_restore($source_id, $destination_id, $file_id = NULL, $config = []) {
+  try {
+    // Retrieve the service
+    $bam = backup_migrate_get_service_object($config);
+
+    // Run the backup.
+    $bam->restore($source_id, $destination_id, $file_id);
+    drupal_set_message('Restore Complete.');
+  }
+  catch (Exception $e) {
+    drupal_set_message($e->getMessage(), 'error');
+    return;
   }
 }
 
@@ -96,9 +121,8 @@ function backup_migrate_backup_migrate_services_alter(\BackupMigrate\Core\Servic
     new \BackupMigrate\Drupal\Environment\DrupalSetMessageLogger()
   );
 
-  $services->add('Archiver', new \BackupMigrate\Core\Service\PearTarArchiver());
+  $services->add('ArchiveReader', new \BackupMigrate\Core\Service\TarArchiveReader());
   $services->add('ArchiveWriter', new \BackupMigrate\Core\Service\TarArchiveWriter());
-
 }
 
 
@@ -125,12 +149,14 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
   // Add the public files
   $plugins->add(
     'files_public',
-    new \BackupMigrate\Core\Source\FileDirectorySource(new Config(['name' => t('Public Files Directory'), 'directory' => 'public://']))
+    new \BackupMigrate\Drupal\Source\DrupalPublicFilesSource(new Config(['name' => t('Public Files Directory')]))
   );
 
-
   // Add a download destination.
-  $plugins->add('download', new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination());
+  $plugins->add('download', new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination(new Config(['name' => t('Download')])));
+
+  // Add an upload destination
+  $plugins->add('upload', new \BackupMigrate\Drupal\Destination\DrupalBrowserUploadDestination(new Config(['name' => t('Upload')])));
 
   // Add a private directory destination.
   $plugins->add('private', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['name' => t('Private Files Directory'), 'directory' => 'private://backup_migrate/'])));

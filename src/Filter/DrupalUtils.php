@@ -33,7 +33,7 @@ class DrupalUtils extends PluginBase {
 
     // Backup configuration
 
-    if ($params['operation'] == 'backup') {
+    if ($params['operation'] == 'backup' || $params['operation'] == 'restore') {
       $schema['groups']['advanced'] = [
         'title' => 'Advanced Settings',
       ];
