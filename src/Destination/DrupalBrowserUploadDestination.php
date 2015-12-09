@@ -7,6 +7,7 @@
 namespace BackupMigrate\Drupal\Destination;
 
 use BackupMigrate\Core\Destination\ReadableDestinationInterface;
+use BackupMigrate\Core\File\BackupFileInterface;
 use BackupMigrate\Core\File\ReadableStreamBackupFile;
 use BackupMigrate\Core\Plugin\PluginBase;
 
@@ -36,7 +37,7 @@ class DrupalBrowserUploadDestination extends PluginBase implements ReadableDesti
    * @param \BackupMigrate\Core\File\BackupFileInterface $file
    * @return \BackupMigrate\Core\File\BackupFileInterface
    */
-  public function loadFileMetadata(\BackupMigrate\Core\Destination\BackupFileInterface $file) {
+  public function loadFileMetadata(BackupFileInterface $file) {
     return $file;
   }
 
@@ -46,7 +47,7 @@ class DrupalBrowserUploadDestination extends PluginBase implements ReadableDesti
    * @param \BackupMigrate\Core\File\BackupFileInterface $file
    * @return \BackupMigrate\Core\File\BackupFileReadableInterface The file if it exists or NULL if it doesn't
    */
-  public function loadFileForReading(\BackupMigrate\Core\Destination\BackupFileInterface $file) {
+  public function loadFileForReading(BackupFileInterface $file) {
     return $file;
   }
 

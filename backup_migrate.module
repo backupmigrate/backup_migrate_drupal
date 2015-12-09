@@ -121,9 +121,8 @@ function backup_migrate_backup_migrate_services_alter(\BackupMigrate\Core\Servic
     new \BackupMigrate\Drupal\Environment\DrupalSetMessageLogger()
   );
 
-  $services->add('Archiver', new \BackupMigrate\Core\Service\PearTarArchiver());
+  $services->add('ArchiveReader', new \BackupMigrate\Core\Service\TarArchiveReader());
   $services->add('ArchiveWriter', new \BackupMigrate\Core\Service\TarArchiveWriter());
-
 }
 
 
@@ -150,9 +149,8 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
   // Add the public files
   $plugins->add(
     'files_public',
-    new \BackupMigrate\Core\Source\FileDirectorySource(new Config(['name' => t('Public Files Directory'), 'directory' => 'public://']))
+    new \BackupMigrate\Drupal\Source\DrupalPublicFilesSource(new Config(['name' => t('Public Files Directory')]))
   );
-
 
   // Add a download destination.
   $plugins->add('download', new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination(new Config(['name' => t('Download')])));

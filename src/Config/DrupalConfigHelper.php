@@ -44,6 +44,8 @@ class DrupalConfigHelper {
       // Add each of the fields.
       foreach ($plugin_schema['fields'] as $field_key => $item) {
         $form_item = array();
+        $value = $plugin_config->get($field_key);
+
         switch ($item['type']) {
           case 'text':
             $form_item['#type'] = 'textfield';
@@ -51,6 +53,7 @@ class DrupalConfigHelper {
               $form_item['#type'] = 'textarea';
               $form_item['#description'] .= ' ' . t('Add one item per line.');
               $form_item['#element_validate'] = [[new DrupalConfigHelper, 'validateMultiText']];
+              $value  = implode("\n", $plugin_config->get($field_key));
             }
             if (!empty($item['multiline'])) {
               $form_item['#type'] = 'textarea';
@@ -84,14 +87,13 @@ class DrupalConfigHelper {
         if ($form_item) {
           // Add the common form elements.
           $form_item['#title'] = $item['title'];
-          $form_item['#default_value'] = $plugin_config->get($field_key);
           $form_item['#parents'] = array($plugin_key, $field_key);
           $form_item['#required'] = !empty($item['required']);
+          $form_item['#default_value'] = $value;
 
           if (!empty($item['description'])) {
             $form_item['#description'] = $item['description'];
           }
-
 
           // Add the field to it's group or directly to the top level of the form.
           if (!empty($item['group'])) {
