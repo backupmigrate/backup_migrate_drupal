@@ -23,11 +23,16 @@ backup_migrate.schedule.*:
   type: config_entity
   label: 'Backup and Migrate schedule'
   mapping:
+    id:
+      type: string
+      label: 'ID'
     name:
       type: string
     label:
       type: label
       label: 'Label'
+    uuid:
+      type: string
 
 backup_migrate.source.*:
   type: config_entity

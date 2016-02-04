@@ -1,0 +1,6 @@
+entity.backup_migrate_schedule.add:
+  route_name: 'entity.backup_migrate_schedule.add'
+  title: 'Add Schedule'
+  appears_on:
+    - entity.backup_migrate_schedule.collection
+

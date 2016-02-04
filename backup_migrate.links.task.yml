@@ -18,3 +18,8 @@ backup_migrate.advanced_backup:
   route_name: backup_migrate.advanced_backup
   parent_id: backup_migrate.quick_backup
 
+backup_migrate.schedule:
+  title: Schedules
+  route_name: entity.backup_migrate_schedule.collection
+  base_route: backup_migrate.quick_backup
+
