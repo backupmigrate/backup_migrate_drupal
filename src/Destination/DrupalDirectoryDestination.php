@@ -55,9 +55,9 @@ class DrupalDirectoryDestination extends DirectoryDestination {
           ['%dir' => $dir]
         );
       }
-      if (!PrivateStream::basePath() || !file_prepare_directory($dir, FILE_CREATE_DIRECTORY && FILE_MODIFY_PERMISSIONS)) {
+      if (!file_prepare_directory($dir, FILE_CREATE_DIRECTORY && FILE_MODIFY_PERMISSIONS)) {
         throw new BackupMigrateException(
-          "The backup file could not be saved to '%dir' because the directory could not be created or cannot be written to. Please make sure your private files directory is configured and writable by the web server.",
+          "The backup file could not be saved to '%dir' because the directory could not be created or cannot be written to. Please make sure your private files directory is writable by the web server.",
           ['%dir' => $dir]
         );
       }
