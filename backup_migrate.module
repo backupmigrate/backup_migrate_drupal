@@ -162,7 +162,7 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
   $plugins->add('private', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['name' => t('Private Files Directory'), 'directory' => 'private://backup_migrate/'])));
 
   // Add a debug destination.
-  // $plugins->add('debug', new \BackupMigrate\Core\Destination\DebugDestination(new Config(['format' => 'html'])));
+  $plugins->add('debug', new \BackupMigrate\Core\Destination\DebugDestination(new Config(['name' => t('Debug'), 'format' => 'html'])));
 
   // Add a file naming filter.
   $plugins->add('namer', new \BackupMigrate\Core\Filter\FileNamer());
