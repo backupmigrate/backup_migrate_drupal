@@ -7,7 +7,7 @@
 
 namespace BackupMigrate\Drupal\Config;
 
-use BackupMigrate\Core\Config\ConfigInterface;
+use BackupMigrate\Core\Config\Config;
 use Drupal\Core\Form\FormStateInterface;
 
 
@@ -23,7 +23,7 @@ class DrupalConfigHelper {
    * @param \BackupMigrate\Core\Config\ConfigInterface $config
    * @return array
    */
-  static public function buildFormFromSchema($schema, ConfigInterface $config) {
+  static public function buildFormFromSchema($schema, ConfigInterface $config, $parents = []) {
     $form = array();
 
     foreach ($schema as $plugin_key => $plugin_schema) {
@@ -87,7 +87,7 @@ class DrupalConfigHelper {
         if ($form_item) {
           // Add the common form elements.
           $form_item['#title'] = $item['title'];
-          $form_item['#parents'] = array($plugin_key, $field_key);
+          $form_item['#parents'] = array_merge($parents, array($plugin_key, $field_key));
           $form_item['#required'] = !empty($item['required']);
           $form_item['#default_value'] = $value;
 

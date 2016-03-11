@@ -4,3 +4,9 @@ entity.backup_migrate_schedule.add:
   appears_on:
     - entity.backup_migrate_schedule.collection
 
+entity.backup_migrate_settings.add_form:
+  route_name: 'entity.backup_migrate_settings.add'
+  title: 'Add Settings Profile'
+  appears_on:
+    - entity.backup_migrate_settings.collection
+

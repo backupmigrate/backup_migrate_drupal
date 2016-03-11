@@ -23,3 +23,8 @@ backup_migrate.schedule:
   route_name: entity.backup_migrate_schedule.collection
   base_route: backup_migrate.quick_backup
 
+backup_migrate.settings:
+  title: Settings
+  route_name: entity.backup_migrate_settings.collection
+  base_route: backup_migrate.quick_backup
+
