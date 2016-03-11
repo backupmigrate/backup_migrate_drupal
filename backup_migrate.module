@@ -17,10 +17,9 @@ define('BACKP_MIGRATE_MODULE_VERSION', '8.x-4.x-dev');
 function backup_migrate_perform_backup($source_id, $destination_id, $config = []) {
   try {
     // Retrieve the service
-    $bam = backup_migrate_get_service_object();
+    $bam = backup_migrate_get_service_object($config);
 
     // Run the backup.
-    $bam->setConfig($config);
     $bam->backup($source_id, $destination_id);
     drupal_set_message('Backup Complete.');
   }
@@ -41,10 +40,9 @@ function backup_migrate_perform_backup($source_id, $destination_id, $config = []
 function backup_migrate_perform_restore($source_id, $destination_id, $file_id = NULL, $config = []) {
   try {
     // Retrieve the service
-    $bam = backup_migrate_get_service_object();
+    $bam = backup_migrate_get_service_object($config);
 
     // Run the backup.
-    $bam->setConfig($config);
     $bam->restore($source_id, $destination_id, $file_id);
     drupal_set_message('Restore Complete.');
   }
@@ -59,9 +57,9 @@ function backup_migrate_perform_restore($source_id, $destination_id, $file_id = 
  *
  * @param array $options
  *  A keyed array of options..
- * @return \BackupMigrate\Core\Service\BackupMigrate
+ * @return \BackupMigrate\Core\Main\BackupMigrate
  */
-function backup_migrate_get_service_object($options = []) {
+function backup_migrate_get_service_object($config_array = [], $options = []) {
   static $bam = NULL;
 
   // If the static cached object has not been loaded.
@@ -87,6 +85,11 @@ function backup_migrate_get_service_object($options = []) {
 
     // Allow other modules to alter the object
     \Drupal::moduleHandler()->alter('backup_migrate_service_object', $bam, $options);
+  }
+
+  // Set the configuration overrides if any were passed in.
+  if ($config_array) {
+    $bam->setConfig(new Config($config_array));
   }
 
   return $bam;
@@ -220,7 +223,7 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
  * Runs all of the enabled schedules if they are due to be run..
  */
 function backup_migrate_cron() {
-  $bam = backup_migrate_get_service_object(['nobrowser' => TRUE]);
+  $bam = backup_migrate_get_service_object([], ['nobrowser' => TRUE]);
 
   $schedules = Schedule::loadMultiple();
   foreach ($schedules as $schedule) {

@@ -48,7 +48,7 @@ class ScheduleForm extends EntityForm {
       '#default_value' => $backup_migrate_schedule->get('enabled'),
     );
 
-    $bam = backup_migrate_get_service_object(['nobrowser' => TRUE]);
+    $bam = backup_migrate_get_service_object([], ['nobrowser' => TRUE]);
     $form['source_id'] = DrupalConfigHelper::getPluginSelector(
       $bam->plugins()->getAllByOp('exportToFile'), t('Backup Source'));
     $form['source_id']['source_id']['#default_value'] = $backup_migrate_schedule->get('source_id');

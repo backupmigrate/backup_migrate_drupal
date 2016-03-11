@@ -54,3 +54,36 @@ entity.backup_migrate_schedule.delete_form:
    requirements:
      _permission: 'administer backup and migrate'
 
+
+entity.backup_migrate_settings.collection:
+   path: '/admin/config/development/backup_migrate/settings'
+   defaults:
+     _entity_list: 'backup_migrate_settings'
+     _title: 'Settings'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_settings.add:
+   path: '/admin/config/development/backup_migrate/settings/add'
+   defaults:
+     _entity_form: backup_migrate_settings.default
+     _title: 'Add settings profile'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_settings.edit_form:
+   path: '/admin/config/development/backup_migrate/settings/edit/{backup_migrate_settings}'
+   defaults:
+    _entity_form: backup_migrate_settings.default
+    _title: 'Edit settings profile'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_settings.delete_form:
+   path: '/admin/config/development/backup_migrate/settings/delete/{backup_migrate_settings}'
+   defaults:
+    _entity_form: backup_migrate_settings.delete
+    _title: 'Delete settings profile'
+   requirements:
+     _permission: 'administer backup and migrate'
+

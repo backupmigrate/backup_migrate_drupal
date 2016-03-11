@@ -7,6 +7,7 @@
 
 namespace Drupal\backup_migrate\Form;
 
+use BackupMigrate\Core\Config\Config;
 use BackupMigrate\Drupal\Config\DrupalConfigHelper;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -79,9 +80,7 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
-    $bam = backup_migrate_get_service_object();
-    $bam->setConfig($form_state->getValues());
-
+    $bam = backup_migrate_get_service_object($form_state->getValues());
 
     // Let the plugins validate their own config data.
     if ($plugin_errors = $bam->plugins()->map('configErrors', array('operation' => 'backup'))) {
