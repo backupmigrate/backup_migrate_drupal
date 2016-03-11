@@ -7,6 +7,7 @@
 
 namespace Drupal\backup_migrate\Form;
 
+use BackupMigrate\Drupal\Config\DrupalConfigHelper;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
@@ -26,10 +27,9 @@ class ScheduleForm extends EntityForm {
     $backup_migrate_schedule = $this->entity;
     $form['label'] = array(
       '#type' => 'textfield',
-      '#title' => $this->t('Label'),
+      '#title' => $this->t('Schedule Name'),
       '#maxlength' => 255,
       '#default_value' => $backup_migrate_schedule->label(),
-      '#description' => $this->t("Label for the Schedule."),
       '#required' => TRUE,
     );
 
@@ -42,7 +42,36 @@ class ScheduleForm extends EntityForm {
       '#disabled' => !$backup_migrate_schedule->isNew(),
     );
 
-    /* You will need additional form elements for your custom properties. */
+    $form['enabled'] = array(
+      '#type' => 'checkbox',
+      '#title' => $this->t('Schedule enabled'),
+      '#default_value' => $backup_migrate_schedule->get('enabled'),
+    );
+
+    $bam = backup_migrate_get_service_object(['nobrowser' => TRUE]);
+    $form['source_id'] = DrupalConfigHelper::getPluginSelector(
+      $bam->plugins()->getAllByOp('exportToFile'), t('Backup Source'));
+    $form['source_id']['source_id']['#default_value'] = $backup_migrate_schedule->get('source_id');
+
+    $form['destination_id'] = DrupalConfigHelper::getPluginSelector(
+      $bam->plugins()->getAllByOp('saveFile'), t('Backup Destination'));
+    $form['source_id']['destination_id']['#default_value'] = $backup_migrate_schedule->get('destination_id');
+
+    $form['period'] = array(
+      '#type' => 'textfield',
+      '#title' => $this->t('Frequency'),
+      '#default_value' => $backup_migrate_schedule->get('period'),
+      '#field_suffix' => $this->t('Seconds'),
+      '#size' => 10,
+    );
+
+//    $form['keep'] = array(
+//      '#type' => 'textfield',
+//      '#title' => $this->t('Number to keep'),
+//      '#default_value' => $backup_migrate_schedule->get('keep'),
+//      '#description' => $this->t('The number of backups to retain. Once this number is reached, the oldest backup will be deleted to make room for the most recent backup. Leave blank to keep all backups.'),
+//      '#size' => 10,
+//    );
 
     return $form;
   }

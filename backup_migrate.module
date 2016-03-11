@@ -1,5 +1,6 @@
 <?php
 use BackupMigrate\Core\Config\Config;
+use Drupal\backup_migrate\Entity\Schedule;
 
 require __DIR__.'/vendor/autoload.php';
 
@@ -16,9 +17,10 @@ define('BACKP_MIGRATE_MODULE_VERSION', '8.x-4.x-dev');
 function backup_migrate_perform_backup($source_id, $destination_id, $config = []) {
   try {
     // Retrieve the service
-    $bam = backup_migrate_get_service_object($config);
+    $bam = backup_migrate_get_service_object();
 
     // Run the backup.
+    $bam->setConfig($config);
     $bam->backup($source_id, $destination_id);
     drupal_set_message('Backup Complete.');
   }
@@ -39,9 +41,10 @@ function backup_migrate_perform_backup($source_id, $destination_id, $config = []
 function backup_migrate_perform_restore($source_id, $destination_id, $file_id = NULL, $config = []) {
   try {
     // Retrieve the service
-    $bam = backup_migrate_get_service_object($config);
+    $bam = backup_migrate_get_service_object();
 
     // Run the backup.
+    $bam->setConfig($config);
     $bam->restore($source_id, $destination_id, $file_id);
     drupal_set_message('Restore Complete.');
   }
@@ -54,11 +57,11 @@ function backup_migrate_perform_restore($source_id, $destination_id, $file_id = 
 /**
  * Get a BackupMigrate service object.
  *
- * @param array $config_array
- *  The configuration as an array.
+ * @param array $options
+ *  A keyed array of options..
  * @return \BackupMigrate\Core\Service\BackupMigrate
  */
-function backup_migrate_get_service_object($config_array = []) {
+function backup_migrate_get_service_object($options = []) {
   static $bam = NULL;
 
   // If the static cached object has not been loaded.
@@ -71,24 +74,19 @@ function backup_migrate_get_service_object($config_array = []) {
     $services = new \BackupMigrate\Core\Service\ServiceLocator();
 
     // Allow other modules to add services.
-    \Drupal::moduleHandler()->alter('backup_migrate_services', $services);
+    \Drupal::moduleHandler()->alter('backup_migrate_services', $services, $options);
 
     // Create the plugin manager
     $plugins = new \BackupMigrate\Core\Plugin\PluginManager($services);
 
     // Allow other modules to add plugins.
-    \Drupal::moduleHandler()->alter('backup_migrate_plugins', $plugins);
+    \Drupal::moduleHandler()->alter('backup_migrate_plugins', $plugins, $options);
 
     // Create the service object.
     $bam = new \BackupMigrate\Core\Main\BackupMigrate($plugins);
 
     // Allow other modules to alter the object
-    \Drupal::moduleHandler()->alter('backup_migrate_service_object', $bam);
-  }
-
-  // Set the configuration overrides if any were passed in.
-  if ($config_array) {
-    $bam->setConfig(new Config($config_array));
+    \Drupal::moduleHandler()->alter('backup_migrate_service_object', $bam, $options);
   }
 
   return $bam;
@@ -132,8 +130,9 @@ function backup_migrate_backup_migrate_services_alter(\BackupMigrate\Core\Servic
  * Add the core Backup and Migrate plugins to the service object.
  *
  * @param \BackupMigrate\Core\Plugin\PluginManagerInterface $plugins
+ * @param array $options
  */
-function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\PluginManagerInterface &$plugins) {
+function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\PluginManagerInterface &$plugins, $options = []) {
 
   // Add the default database.
   $info = \Drupal\Core\Database\Database::getConnectionInfo('default', 'default');
@@ -152,17 +151,21 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
     new \BackupMigrate\Drupal\Source\DrupalPublicFilesSource(new Config(['name' => t('Public Files Directory')]))
   );
 
-  // Add a download destination.
-  $plugins->add('download', new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination(new Config(['name' => t('Download')])));
+  // If this is a nobrowser op (cron) then do not add the browser plugins.
+  // TODO: Make this better.
+  if (empty($options['nobrowser'])) {
+    // Add a download destination.
+    $plugins->add('download', new \BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination(new Config(['name' => t('Download')])));
 
-  // Add an upload destination
-  $plugins->add('upload', new \BackupMigrate\Drupal\Destination\DrupalBrowserUploadDestination(new Config(['name' => t('Upload')])));
+    // Add an upload destination
+    $plugins->add('upload', new \BackupMigrate\Drupal\Destination\DrupalBrowserUploadDestination(new Config(['name' => t('Upload')])));
+
+    // Add a debug destination.
+    $plugins->add('debug', new \BackupMigrate\Core\Destination\DebugDestination(new Config(['name' => t('Debug'), 'format' => 'html'])));
+  }
 
   // Add a private directory destination.
   $plugins->add('private', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['name' => t('Private Files Directory'), 'directory' => 'private://backup_migrate/'])));
-
-  // Add a debug destination.
-  $plugins->add('debug', new \BackupMigrate\Core\Destination\DebugDestination(new Config(['name' => t('Debug'), 'format' => 'html'])));
 
   // Add a file naming filter.
   $plugins->add('namer', new \BackupMigrate\Core\Filter\FileNamer());
@@ -209,4 +212,18 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
 //    ), 'files_public');
 
 
+}
+
+/**
+ * Implements hook_cron().
+ *
+ * Runs all of the enabled schedules if they are due to be run..
+ */
+function backup_migrate_cron() {
+  $bam = backup_migrate_get_service_object(['nobrowser' => TRUE]);
+
+  $schedules = Schedule::loadMultiple();
+  foreach ($schedules as $schedule) {
+    $schedule->run($bam);
+  }
 }

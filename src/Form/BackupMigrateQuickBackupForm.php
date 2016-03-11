@@ -51,7 +51,8 @@ class BackupMigrateQuickBackupForm extends FormBase {
 
 
     // Create the service
-//    $bam = backup_migrate_get_service_object($config);
+//    $bam = backup_migrate_get_service_object();
+//    $bam->setConfig($config);
 //    $bam->plugins()->get('namer')->confGet('filename');
 
     // $form['quickbackup']['source_id'] = _backup_migrate_get_source_pulldown(\Drupal::config('backup_migrate.settings')->get('backup_migrate_source_id'));
