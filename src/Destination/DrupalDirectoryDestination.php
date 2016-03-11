@@ -12,6 +12,7 @@ use BackupMigrate\Core\Destination\DirectoryDestination;
 use BackupMigrate\Core\Exception\BackupMigrateException;
 use BackupMigrate\Core\File\BackupFileReadableInterface;
 use Drupal\Core\File\FileSystem;
+use Drupal\Core\StreamWrapper\PrivateStream;
 
 /**
  * Class DrupalDirectoryDestination
@@ -48,6 +49,12 @@ class DrupalDirectoryDestination extends DirectoryDestination {
 
     // Attempt to create/prepare the directory if it is in the private directory
     if ($is_private) {
+      if (!PrivateStream::basePath()) {
+        throw new BackupMigrateException(
+          "The backup file could not be saved to '%dir' because your private files system path has not been set.",
+          ['%dir' => $dir]
+        );
+      }
       if (!file_prepare_directory($dir, FILE_CREATE_DIRECTORY && FILE_MODIFY_PERMISSIONS)) {
         throw new BackupMigrateException(
           "The backup file could not be saved to '%dir' because the directory could not be created or cannot be written to. Please make sure your private files directory is writable by the web server.",

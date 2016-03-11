@@ -22,3 +22,35 @@ backup_migrate.restore:
    requirements:
      _permission: 'restore from backup'
 
+entity.backup_migrate_schedule.collection:
+   path: '/admin/config/development/backup_migrate/schedule'
+   defaults:
+     _entity_list: 'backup_migrate_schedule'
+     _title: 'Schedule'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_schedule.add:
+   path: '/admin/config/development/backup_migrate/schedule/add'
+   defaults:
+     _entity_form: backup_migrate_schedule.default
+     _title: 'Add schedule'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_schedule.edit_form:
+   path: '/admin/config/development/backup_migrate/schedule/edit/{backup_migrate_schedule}'
+   defaults:
+    _entity_form: backup_migrate_schedule.default
+    _title: 'Edit schedule'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_schedule.delete_form:
+   path: '/admin/config/development/backup_migrate/schedule/delete/{backup_migrate_schedule}'
+   defaults:
+    _entity_form: backup_migrate_schedule.delete
+    _title: 'Delete schedule'
+   requirements:
+     _permission: 'administer backup and migrate'
+
