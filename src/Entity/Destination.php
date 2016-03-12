@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Contains \Drupal\backup_migrate\Entity\Destination.
+ */
+
+namespace Drupal\backup_migrate\Entity;
+
+use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\backup_migrate\DestinationInterface;
+
+
+/**
+ * Defines the Backup Destination entity.
+ *
+ * @ConfigEntityType(
+ *   id = "backup_migrate_destination",
+ *   label = @Translation("Backup Destination"),
+ *   module = "backup_migrate",
+ *   entity_keys = {
+ *     "id" = "id",
+ *     "label" = "label",
+ *     "uuid" = "uuid"
+ *   },
+ *   handlers = {
+ *     "list_builder" = "Drupal\backup_migrate\Controller\DestinationListBuilder",
+ *     "form" = {
+ *       "default" = "Drupal\backup_migrate\Form\DestinationForm",
+ *       "delete" = "Drupal\backup_migrate\Form\DestinationDeleteForm"
+ *     },
+ *   },
+ *   links = {
+ *     "edit-form" = "/admin/config/development/backup_migrate/settings/destination/edit/{backup_migrate_destination}",
+ *     "delete-form" = "/admin/config/development/backup_migrate/settings/destination/delete/{backup_migrate_destination}",
+ *     "collection" = "/admin/config/development/backup_migrate/settings/destination",
+ *   }
+ * )
+ */
+class Destination extends ConfigEntityBase {
+  /**
+   * The Backup Destination ID.
+   *
+   * @var string
+   */
+  protected $id;
+
+  /**
+   * The Backup Destination label.
+   *
+   * @var string
+   */
+  protected $label;
+
+}

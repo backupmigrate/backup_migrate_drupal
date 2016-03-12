@@ -68,3 +68,19 @@ backup_migrate.backup_migrate_settings.*:
     config:
       type: mapping
       label: 'Configuration'
+
+backup_migrate.backup_migrate_destination.*:
+  type: config_entity
+  label: 'Backup Source config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    config:
+      type: mapping
+      label: 'Configuration'
