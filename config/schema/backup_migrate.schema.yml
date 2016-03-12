@@ -49,6 +49,9 @@ backup_migrate.backup_migrate_schedule.*:
     destination_id:
       type: string
       label: 'Destination'
+    settings_profile_id:
+      type: string
+      label: 'Settings Profile'
 
 backup_migrate.backup_migrate_settings.*:
   type: config_entity

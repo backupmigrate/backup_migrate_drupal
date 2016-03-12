@@ -57,6 +57,10 @@ class ScheduleForm extends EntityForm {
       $bam->plugins()->getAllByOp('saveFile'), t('Backup Destination'));
     $form['source_id']['destination_id']['#default_value'] = $backup_migrate_schedule->get('destination_id');
 
+    $form['settings_profile_id'] =
+      DrupalConfigHelper::getSettingsProfileSelector(t('Settings Profile'));
+
+
     $form['period'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Frequency'),
