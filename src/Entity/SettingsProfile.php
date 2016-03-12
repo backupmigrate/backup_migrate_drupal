@@ -23,6 +23,7 @@ use Drupal\backup_migrate\SettingsProfileInterface;
  *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
+ *   admin_permission = "administer backup and migrate",
  *   handlers = {
  *     "list_builder" = "Drupal\backup_migrate\Controller\SettingsProfileListBuilder",
  *     "form" = {

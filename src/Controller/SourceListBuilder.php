@@ -5,7 +5,7 @@
  * Contains \Drupal\backup_migrate\SourceListBuilder.
  */
 
-namespace Drupal\backup_migrate;
+namespace Drupal\backup_migrate\Controller;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;

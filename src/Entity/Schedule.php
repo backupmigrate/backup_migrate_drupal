@@ -19,6 +19,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   id = "backup_migrate_schedule",
  *   label = @Translation("Schedule"),
  *   module = "backup_migrate",
+ *   admin_permission = "administer backup and migrate",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",

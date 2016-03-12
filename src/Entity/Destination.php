@@ -21,8 +21,10 @@ use Drupal\backup_migrate\DestinationInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "config" = "config"
  *   },
+ *   admin_permission = "administer backup and migrate",
  *   handlers = {
  *     "list_builder" = "Drupal\backup_migrate\Controller\DestinationListBuilder",
  *     "form" = {

@@ -17,16 +17,18 @@ use Drupal\backup_migrate\SourceInterface;
  *   id = "backup_migrate_source",
  *   label = @Translation("Backup Source"),
  *   handlers = {
- *     "list_builder" = "Drupal\backup_migrate\SourceListBuilder",
+ *     "list_builder" = "Drupal\backup_migrate\Controller\SourceListBuilder",
  *     "form" = {
  *       "default" = "Drupal\backup_migrate\Form\SourceForm",
  *       "delete" = "Drupal\backup_migrate\Form\SourceDeleteForm"
  *     },
  *   },
+ *   admin_permission = "administer backup and migrate",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "config" = "config"
  *   },
  *   links = {
  *     "canonical" = "/admin/config/development/backup_migrate/settings/source/{backup_migrate_source}",
