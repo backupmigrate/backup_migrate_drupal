@@ -8,6 +8,7 @@
 namespace BackupMigrate\Drupal\Config;
 
 use BackupMigrate\Core\Config\Config;
+use Drupal\backup_migrate\Entity\SettingsProfile;
 use Drupal\Core\Form\FormStateInterface;
 
 
@@ -126,7 +127,7 @@ class DrupalConfigHelper {
    * @return array
    */
   public static function getPluginSelector($plugins, $title) {
-    $options = array();
+    $options = [];
     foreach ($plugins as $key => $plugin) {
       $options[$key] = $plugin->confGet('name', $key);
     }
@@ -135,5 +136,25 @@ class DrupalConfigHelper {
       '#title' => $title,
       '#options' => $options,
     ];
+  }
+
+  /**
+   * GEt a pulldown for the list of all settings profiles.
+   *
+   * @param $title
+   * @return array
+   */
+  public static function getSettingsProfileSelector($title) {
+    $options = [];
+    foreach (SettingsProfile::loadMultiple() as $key => $profile) {
+      $options[$key] = $profile->get('label');
+    }
+    if ($options) {
+      return [
+        '#type' => 'select',
+        '#title' => $title,
+        '#options' => $options,
+      ];
+    }
   }
 }
