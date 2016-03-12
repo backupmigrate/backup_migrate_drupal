@@ -144,15 +144,16 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
     $db = new \BackupMigrate\Core\Source\MySQLiSource(new Config($info + ['name' => t('Default Database')]));
     $plugins->add('db', $db);
 
+    $plugins->add('db_exclude', new \BackupMigrate\Core\Filter\DBExcludeFilter(new Config(['source' => $db])));
+
     // Add the entire site
     $plugins->add('site', new \BackupMigrate\Drupal\Source\DrupalSiteArchiveSource(new Config(['name' => t('Entire Site'), 'directory' => DRUPAL_ROOT]), $db));
   }
 
   // Add the public files
-  $plugins->add(
-    'files_public',
-    new \BackupMigrate\Drupal\Source\DrupalPublicFilesSource(new Config(['name' => t('Public Files Directory')]))
-  );
+  $files_public = new \BackupMigrate\Drupal\Source\DrupalPublicFilesSource(new Config(['name' => t('Public Files Directory')]));
+  $plugins->add('files_public', $files_public);
+  $plugins->add('files_public_exclude', new \BackupMigrate\Core\Filter\FileExcludeFilter(new Config(['source' => $files_public])));
 
   // If this is a nobrowser op (cron) then do not add the browser plugins.
   // TODO: Make this better.
@@ -170,10 +171,11 @@ function backup_migrate_backup_migrate_plugins_alter(\BackupMigrate\Core\Plugin\
   // Add a private directory destination.
   $plugins->add('private', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['name' => t('Private Files Directory'), 'directory' => 'private://backup_migrate/'])));
 
+
   // Add a file naming filter.
   $plugins->add('namer', new \BackupMigrate\Core\Filter\FileNamer());
 
-  // Add a compression filter
+  // Add a compression filter.
   $plugins->add('compressor', new \BackupMigrate\Core\Filter\CompressionFilter());
 
   // Add the Drupal utilities filter.
