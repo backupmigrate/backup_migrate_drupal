@@ -39,7 +39,7 @@ class BackupMigrateRestoreForm extends FormBase {
     );
 
     $form['source_id'] = DrupalConfigHelper::getPluginSelector(
-      $bam->plugins()->getAllByOp('importFromFile'), $this->t('Restore To'));
+      $bam->sources(), $this->t('Restore To'));
 
 
     $conf_schema = $bam->plugins()->map('configSchema', array('operation' => 'restore'));

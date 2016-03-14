@@ -8,6 +8,9 @@
 namespace BackupMigrate\Drupal\Config;
 
 use BackupMigrate\Core\Config\Config;
+use BackupMigrate\Core\Config\ConfigInterface;
+use BackupMigrate\Core\Main\BackupMigrateInterface;
+use BackupMigrate\Core\Plugin\PluginManagerInterface;
 use Drupal\backup_migrate\Entity\SettingsProfile;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -126,9 +129,9 @@ class DrupalConfigHelper {
    * @param \BackupMigrate\Core\Config\ConfigurableInterface[] $plugins
    * @return array
    */
-  public static function getPluginSelector($plugins, $title) {
+  public static function getPluginSelector(PluginManagerInterface $plugins, $title) {
     $options = [];
-    foreach ($plugins as $key => $plugin) {
+    foreach ($plugins->getAll() as $key => $plugin) {
       $options[$key] = $plugin->confGet('name', $key);
     }
     return [
@@ -137,6 +140,29 @@ class DrupalConfigHelper {
       '#options' => $options,
     ];
   }
+
+  /**
+   * Get a select form item for the given list of sources
+   *
+   * @param \BackupMigrate\Core\Main\BackupMigrateInterface $bam
+   * @param $title
+   * @return array
+   */
+  public static function getSourceSelector(BackupMigrateInterface $bam, $title) {
+    return DrupalConfigHelper::getPluginSelector($bam->sources(), $title);
+  }
+
+  /**
+   * Get a select form item for the given list of sources
+   *
+   * @param \BackupMigrate\Core\Main\BackupMigrateInterface $bam
+   * @param $title
+   * @return array
+   */
+  public static function getDestinationSelector(BackupMigrateInterface $bam, $title) {
+    return DrupalConfigHelper::getPluginSelector($bam->destinations(), $title);
+  }
+
 
   /**
    * GEt a pulldown for the list of all settings profiles.
