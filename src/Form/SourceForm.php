@@ -7,6 +7,8 @@
 
 namespace Drupal\backup_migrate\Form;
 
+use BackupMigrate\Core\Config\Config;
+use BackupMigrate\Drupal\Config\DrupalConfigHelper;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
@@ -42,7 +44,18 @@ class SourceForm extends EntityForm {
       '#disabled' => !$backup_migrate_source->isNew(),
     );
 
-    /* You will need additional form elements for your custom properties. */
+    $form['type'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Source Type'),
+    );
+    foreach (\Drupal::service('plugin.manager.backup_migrate_sources')->getDefinitions() as $type) {
+      $form['type']['#options'][$type['id']] = $type['title'];
+    }
+
+    if ($source = $this->entity->getObject()) {
+      $conf_schema = $source->configSchema(['operation' => 'initialize']);
+      $form['config'] = DrupalConfigHelper::buildFormFromSchemaSingle($conf_schema, $source->config(), ['config']);
+    }
 
     return $form;
   }
@@ -51,6 +64,7 @@ class SourceForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    dd($form_state->getValues());
     $backup_migrate_source = $this->entity;
     $status = $backup_migrate_source->save();
 

@@ -7,8 +7,14 @@
 
 namespace Drupal\backup_migrate\Entity;
 
+use BackupMigrate\Core\Config\Config;
+use BackupMigrate\Core\Exception\BackupMigrateException;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\backup_migrate\SourceInterface;
+
+use BackupMigrate\Core\Source\SourceInterface;
+use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
+use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
 
 /**
  * Defines the Backup Source entity.
@@ -28,6 +34,7 @@ use Drupal\backup_migrate\SourceInterface;
  *     "id" = "id",
  *     "label" = "label",
  *     "uuid" = "uuid",
+ *     "type" = "type",
  *     "config" = "config"
  *   },
  *   links = {
@@ -39,19 +46,13 @@ use Drupal\backup_migrate\SourceInterface;
  *   }
  * )
  */
-class Source extends ConfigEntityBase implements SourceInterface {
+class Source extends WrapperEntityBase {
   /**
-   * The Backup Source ID.
+   * Return the plugin manager.
    *
-   * @var string
+   * @return string
    */
-  protected $id;
-
-  /**
-   * The Backup Source label.
-   *
-   * @var string
-   */
-  protected $label;
-
+  protected function getPluginManager() {
+    return \Drupal::service('plugin.manager.backup_migrate_sources');
+  }
 }

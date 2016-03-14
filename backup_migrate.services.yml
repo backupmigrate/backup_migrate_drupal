@@ -1,0 +1,4 @@
+services:
+  plugin.manager.backup_migrate_sources:
+    class: BackupMigrate\Drupal\EntityPlugins\SourcePluginManager
+    parent: default_plugin_manager

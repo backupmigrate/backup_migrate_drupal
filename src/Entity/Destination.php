@@ -9,6 +9,7 @@ namespace Drupal\backup_migrate\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\backup_migrate\DestinationInterface;
+use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 
 
 /**
@@ -39,19 +40,13 @@ use Drupal\backup_migrate\DestinationInterface;
  *   }
  * )
  */
-class Destination extends ConfigEntityBase {
+class Destination extends WrapperEntityBase {
   /**
-   * The Backup Destination ID.
+   * Return the plugin manager.
    *
-   * @var string
+   * @return string
    */
-  protected $id;
-
-  /**
-   * The Backup Destination label.
-   *
-   * @var string
-   */
-  protected $label;
-
+  protected function getPluginManager() {
+    return \Drupal::service('plugin.manager.backup_migrate_destination');
+  }
 }

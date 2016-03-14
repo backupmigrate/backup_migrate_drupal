@@ -97,3 +97,9 @@ backup_migrate.backup_migrate_source.*:
       label: 'Label'
     uuid:
       type: string
+    type:
+      type: string
+      label: 'Source Type'
+    config:
+      type: mapping
+      label: 'Configuration'
