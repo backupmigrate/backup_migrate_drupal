@@ -14,7 +14,7 @@ use BackupMigrate\Core\Main\BackupMigrateInterface;
  * Class SourcePluginBase
  * @package BackupMigrate\Drupal\EntityPlugins
  */
-abstract class SourcePluginBase extends WrapperPluginBase {
+abstract class SourcePluginBase extends WrapperPluginBase implements SourcePluginInterface {
 
   /**
    * {@inheritdoc}

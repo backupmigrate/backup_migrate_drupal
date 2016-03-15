@@ -11,21 +11,13 @@ use BackupMigrate\Drupal\EntityPlugins\DestinationPluginInterface;
 use BackupMigrate\Drupal\EntityPlugins\DestinationPluginBase;
 
 /**
- * Defines an mysql source plugin.
+ * Defines a file directory destination plugin.
  *
  * @BackupMigrateDestinationPlugin(
  *   id = "Directory",
  *   title = @Translation("Server File Directory"),
  *   description = @Translation("Back up to a directory on your web server."),
+ *   wrapped_class = "\BackupMigrate\Core\Destination\DirectoryDestination"
  * )
  */
-class DirectoryDestinationPlugin extends DestinationPluginBase implements DestinationPluginInterface {
-  /**
-   * Get the Backup and Migrate source object.
-   *
-   * @return BackupMigrate\Core\Destination\DestinationInterface;
-   */
-  public function getObject() {
-    return new DirectoryDestination($this->getConfig());
-  }
-}
+class DirectoryDestinationPlugin extends DestinationPluginBase {}

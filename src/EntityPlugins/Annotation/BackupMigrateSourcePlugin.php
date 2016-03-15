@@ -43,4 +43,12 @@ class BackupMigrateSourcePlugin extends Plugin {
    */
   public $description;
 
+
+  /**
+   * The class of the Backup and Migrate source object.
+   *
+   * @var string
+   */
+  public $wrapped_class;
+
 }
