@@ -33,9 +33,13 @@ class DrupalConfigHelper {
   static public function buildAllPluginsForm(PluginManagerInterface $plugins, $operation, $parents = []) {
     $form = [];
     foreach ($plugins->getAll() as $plugin_key => $plugin) {
-      $form[$plugin_key] = DrupalConfigHelper::buildPluginForm($plugin, $operation, array_merge($parents, [$plugin_key]));
+      $schema = $plugin->configSchema(['operation' => $operation]);
+      $config = $plugin->config();
+
+      DrupalConfigHelper::addFieldsFromSchema($form, $schema, $config, array_merge($parents, [$plugin_key]));
     }
     return $form;
+
   }
 
   /**
@@ -60,14 +64,36 @@ class DrupalConfigHelper {
    * @param array $schema
    *  A configuration schema from one or more Backup and Migrate plugins.
    * @param \BackupMigrate\Core\Config\ConfigInterface $config
+   *  The configuration object containing the default values.
    * @param array $parents
+   *  The form parents array.
    * @return array
+   *  A drupal forms api array.
    */
-  static public function buildFormFromSchema($schema, ConfigInterface $config, $parents = []) {
+  static public function buildFormFromSchema($schema, ConfigInterface $config, $parents = [], $form = []) {
     $form = [];
+    DrupalConfigHelper::addFieldsFromSchema($schema, $config, $parents);
+    return $form;
+  }
 
+  /**
+   * Add the schema fields to the given form array.
+   *
+   * @param array $schema
+   *  A configuration schema from one or more Backup and Migrate plugins.
+   * @param \BackupMigrate\Core\Config\ConfigInterface $config
+   *  The configuration object containing the default values.
+   * @param array $parents
+   *  The form parents array.
+   */
+  static public function addFieldsFromSchema(&$form, $schema, ConfigInterface $config, $parents = []) {
     // Add the specified groups.
     foreach ($schema['groups'] as $group_key => $item) {
+      // If the group is just called 'default' then use the key from the plugin as the group key.
+      // @TODO: make this less ugly.
+      if ($group_key == 'default' && $parents) {
+        $group_key = end($parents);
+      }
       if (!isset($form[$group_key])) {
         $form[$group_key] = [
           '#type' => 'fieldset',
@@ -132,15 +158,17 @@ class DrupalConfigHelper {
 
         // Add the field to it's group or directly to the top level of the form.
         if (!empty($item['group'])) {
-          $form[$item['group']][$field_key] = $form_item;
+          $group_key = $item['group'];
+          if ($group_key == 'default' && $parents) {
+            $group_key = end($parents);
+          }
+          $form[$group_key][$field_key] = $form_item;
         }
         else {
           $form[$field_key] = $form_item;
         }
       }
     }
-
-    return $form;
   }
 
   /**
