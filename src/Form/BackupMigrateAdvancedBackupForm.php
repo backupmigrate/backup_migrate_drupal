@@ -46,8 +46,7 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
     $form['source']['source_id'] = DrupalConfigHelper::getSourceSelector($bam, t('Backup Source'));
     $form['source']['source_id']['#default_value'] = \Drupal::config('backup_migrate.settings')->get('backup_migrate_source_id');
 
-    $conf_schema = $bam->plugins()->map('configSchema', array('operation' => 'backup'));
-    $form += DrupalConfigHelper::buildFormFromSchema($conf_schema, $bam->plugins()->config());
+    $form += DrupalConfigHelper::buildAllPluginsForm($bam->plugins(), 'backup');
 
     $form['destination'] = array(
       '#type' => 'fieldset',

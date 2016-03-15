@@ -60,8 +60,10 @@ function backup_migrate_perform_restore($source_id, $destination_id, $file_id = 
 /**
  * Get a BackupMigrate service object.
  *
+ * @param array $config_array
+ *  An array of configuration arrays, keyed by plugin id.
  * @param array $options
- *  A keyed array of options..
+ *  A keyed array of options.
  * @return \BackupMigrate\Core\Main\BackupMigrate
  */
 function backup_migrate_get_service_object($config_array = [], $options = []) {

@@ -7,7 +7,6 @@
 
 namespace BackupMigrate\Drupal\Config;
 
-use BackupMigrate\Core\Config\Config;
 use BackupMigrate\Core\Config\ConfigInterface;
 use BackupMigrate\Core\Main\BackupMigrateInterface;
 use BackupMigrate\Core\Plugin\PluginManagerInterface;
@@ -20,107 +19,52 @@ use Drupal\Core\Form\FormStateInterface;
  * @package BackupMigrate\Drupal\Config
  */
 class DrupalConfigHelper {
-
   /**
-   * @param array $schema
-   *  A configuration schema from one or more Backup and Migrate plugins.
-   * @param \BackupMigrate\Core\Config\ConfigInterface $config
+   * Build the configuration form for all plugins in a manager.
+   *
+   * @param \BackupMigrate\Core\Plugin\PluginManagerInterface $plugins
+   *  The PluginManager containing all of the plugins to be configured.
+   * @param string $operation
+   *  'backup', 'restore', or 'initialize' depending on the operation being configured for.
+   * @param array $parents
+   *  The form parents array.
    * @return array
    */
-  static public function buildFormFromSchema($schema, ConfigInterface $config, $parents = []) {
-    $form = array();
-
-    foreach ($schema as $plugin_key => $plugin_schema) {
-      // Get the configuration for the plugin to use as the form default values.
-      $plugin_config = $config->get($plugin_key);
-
-      // Add the specified groups.
-      foreach ($plugin_schema['groups'] as $group_key => $item) {
-        if (!isset($form[$group_key])) {
-          $form[$group_key] = [
-            '#type' => 'fieldset',
-            '#title' => $item['title'],
-            '#tree' => FALSE,
-          ];
-        }
-      }
-
-      // Add each of the fields.
-      foreach ($plugin_schema['fields'] as $field_key => $item) {
-        $form_item = array();
-        $value = $plugin_config->get($field_key);
-
-        switch ($item['type']) {
-          case 'text':
-            $form_item['#type'] = 'textfield';
-            if (!empty($item['multiple'])) {
-              $form_item['#type'] = 'textarea';
-              $form_item['#description'] .= ' ' . t('Add one item per line.');
-              $form_item['#element_validate'] = [[new DrupalConfigHelper, 'validateMultiText']];
-              $value  = implode("\n", $plugin_config->get($field_key));
-            }
-            if (!empty($item['multiline'])) {
-              $form_item['#type'] = 'textarea';
-            }
-            break;
-          case 'password':
-            $form_item['#type'] = 'password';
-            break;
-          case 'number':
-            $form_item['#type'] = 'textfield';
-            $form_item['#size'] = 5;
-            if (!empty($item['max'])) {
-              $form_item['#size'] = strlen((string)$item['max']) + 3;
-            }
-
-            break;
-          case 'boolean':
-            $form_item['#type'] = 'checkbox';
-            break;
-          case 'enum':
-            $form_item['#type'] = 'select';
-            $form_item['#multiple'] = !empty($item['multiple']);
-            if (empty($item['#required']) && empty($item['multiple'])) {
-              $item['options'] = array('' => '--' . t('None') . '--') + $item['options'];
-            }
-            $form_item['#options'] = $item['options'];
-            break;
-        }
-
-        // If there is a form item add it to the form.
-        if ($form_item) {
-          // Add the common form elements.
-          $form_item['#title'] = $item['title'];
-          $form_item['#parents'] = array_merge($parents, array($plugin_key, $field_key));
-          $form_item['#required'] = !empty($item['required']);
-          $form_item['#default_value'] = $value;
-
-          if (!empty($item['description'])) {
-            $form_item['#description'] = $item['description'];
-          }
-
-          // Add the field to it's group or directly to the top level of the form.
-          if (!empty($item['group'])) {
-            $form[$item['group']][$field_key] = $form_item;
-          }
-          else {
-            $form[$field_key] = $form_item;
-          }
-        }
-      }
+  static public function buildAllPluginsForm(PluginManagerInterface $plugins, $operation, $parents = []) {
+    $form = [];
+    foreach ($plugins->getAll() as $plugin_key => $plugin) {
+      $form[$plugin_key] = DrupalConfigHelper::buildPluginForm($plugin, $operation, array_merge($parents, [$plugin_key]));
     }
-
     return $form;
   }
 
   /**
+   * Build the configuration form for a single plugin, source or destination.
+   *
+   * @param \BackupMigrate\Core\Config\ConfigurableInterface $plugin
+   *  The plugin, source or destination to build the form for.
+   * @param string $operation
+   *  'backup', 'restore', or 'initialize' depending on the operation being configured for.
+   * @param array $parents
+   * @return array
+   */
+  static public function buildPluginForm($plugin, $operation, $parents = ['config']) {
+    $schema = $plugin->configSchema(['operation' => $operation]);
+    $config = $plugin->config();
+
+    return DrupalConfigHelper::buildFormFromSchema($schema, $config, $parents);
+  }
+
+
+  /**
    * @param array $schema
    *  A configuration schema from one or more Backup and Migrate plugins.
    * @param \BackupMigrate\Core\Config\ConfigInterface $config
+   * @param array $parents
    * @return array
    */
-  static public function buildFormFromSchemaSingle($schema, ConfigInterface $config, $parents = []) {
-    $form = array();
+  static public function buildFormFromSchema($schema, ConfigInterface $config, $parents = []) {
+    $form = [];
 
     // Add the specified groups.
     foreach ($schema['groups'] as $group_key => $item) {
@@ -135,7 +79,7 @@ class DrupalConfigHelper {
 
     // Add each of the fields.
     foreach ($schema['fields'] as $field_key => $item) {
-      $form_item = array();
+      $form_item = [];
       $value = $config->get($field_key);
 
       switch ($item['type']) {
@@ -145,7 +89,7 @@ class DrupalConfigHelper {
             $form_item['#type'] = 'textarea';
             $form_item['#description'] .= ' ' . t('Add one item per line.');
             $form_item['#element_validate'] = [[new DrupalConfigHelper, 'validateMultiText']];
-            $value  = implode("\n", $config->get($field_key));
+            $value  = implode("\n", $value);
           }
           if (!empty($item['multiline'])) {
             $form_item['#type'] = 'textarea';
@@ -160,7 +104,6 @@ class DrupalConfigHelper {
           if (!empty($item['max'])) {
             $form_item['#size'] = strlen((string)$item['max']) + 3;
           }
-
           break;
         case 'boolean':
           $form_item['#type'] = 'checkbox';
@@ -169,7 +112,7 @@ class DrupalConfigHelper {
           $form_item['#type'] = 'select';
           $form_item['#multiple'] = !empty($item['multiple']);
           if (empty($item['#required']) && empty($item['multiple'])) {
-            $item['options'] = array('' => '--' . t('None') . '--') + $item['options'];
+            $item['options'] = ['' => '--' . t('None') . '--'] + $item['options'];
           }
           $form_item['#options'] = $item['options'];
           break;
@@ -213,7 +156,8 @@ class DrupalConfigHelper {
   /**
    * Get a pulldown for the given list of plugins
    *
-   * @param \BackupMigrate\Core\Config\ConfigurableInterface[] $plugins
+   * @param \BackupMigrate\Core\Config\ConfigurableInterface[]|\BackupMigrate\Core\Plugin\PluginManagerInterface $plugins
+   * @param $title
    * @return array
    */
   public static function getPluginSelector(PluginManagerInterface $plugins, $title) {

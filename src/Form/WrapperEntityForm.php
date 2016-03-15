@@ -51,9 +51,7 @@ class WrapperEntityForm  extends EntityForm {
     }
 
     if ($bam_plugin = $this->entity->getObject()) {
-      $conf_schema = $bam_plugin->configSchema(['operation' => 'initialize']);
-      dd($bam_plugin);
-      $form['config'] = DrupalConfigHelper::buildFormFromSchemaSingle($conf_schema, $bam_plugin->config(), ['config']);
+      $form['config'] = DrupalConfigHelper::buildPluginForm($bam_plugin, 'initialize', ['config']);
     }
 
     return $form;

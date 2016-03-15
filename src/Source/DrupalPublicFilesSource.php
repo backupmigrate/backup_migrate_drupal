@@ -17,6 +17,8 @@ use BackupMigrate\Core\Source\FileDirectorySource;
  */
 class DrupalPublicFilesSource extends FileDirectorySource {
 
+  // @TODO: Filtering is now handled by an external plugin. This logic needs to move there.
+
   // @TODO: Add configuration defaults for excluded files
   // @TODO: Allow modules to add their own excluded defaults
   // @TODO: Fix the directory to 'public://'
