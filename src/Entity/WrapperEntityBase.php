@@ -61,7 +61,10 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
    * @throws \BackupMigrate\Core\Exception\BackupMigrateException
    */
   public function getPlugin() {
-    return $this->getPluginCollection()->get($this->get('type'));
+    if ($this->get('type')) {
+      return $this->getPluginCollection()->get($this->get('type'));
+    }
+    return null;
   }
 
   /**
@@ -79,12 +82,15 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
    * @return \Drupal\block\BlockPluginCollection
    */
   public function getPluginCollection() {
-    if (!$this->pluginCollection) {
-      $config = ['name' => $this->get('label')] + $this->get('config');
-      $this->pluginCollection = new DefaultSingleLazyPluginCollection(
-        $this->getPluginManager(), $this->get('type'), $config);
+    if ($this->get('type')) {
+      if (!$this->pluginCollection) {
+        $config = ['name' => $this->get('label')] + (array)$this->get('config');
+        $this->pluginCollection = new DefaultSingleLazyPluginCollection(
+          $this->getPluginManager(), $this->get('type'), $config);
+      }
+      return $this->pluginCollection;
     }
-    return $this->pluginCollection;
+    return [];
   }
 
   /**

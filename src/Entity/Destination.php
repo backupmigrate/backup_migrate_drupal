@@ -30,7 +30,7 @@ use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
  *     "list_builder" = "Drupal\backup_migrate\Controller\DestinationListBuilder",
  *     "form" = {
  *       "default" = "Drupal\backup_migrate\Form\DestinationForm",
- *       "delete" = "Drupal\backup_migrate\Form\DestinationDeleteForm"
+ *       "delete" = "Drupal\backup_migrate\Form\EntityDeleteForm"
  *     },
  *   },
  *   links = {

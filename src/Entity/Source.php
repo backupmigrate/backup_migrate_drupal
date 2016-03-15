@@ -26,7 +26,7 @@ use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
  *     "list_builder" = "Drupal\backup_migrate\Controller\SourceListBuilder",
  *     "form" = {
  *       "default" = "Drupal\backup_migrate\Form\SourceForm",
- *       "delete" = "Drupal\backup_migrate\Form\SourceDeleteForm"
+ *       "delete" = "Drupal\backup_migrate\Form\EntityDeleteForm"
  *     },
  *   },
  *   admin_permission = "administer backup and migrate",

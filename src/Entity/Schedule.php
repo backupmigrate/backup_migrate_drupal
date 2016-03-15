@@ -29,7 +29,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "list_builder" = "Drupal\backup_migrate\Controller\ScheduleListBuilder",
  *     "form" = {
  *       "default" = "Drupal\backup_migrate\Form\ScheduleForm",
- *       "delete" = "Drupal\backup_migrate\Form\ScheduleDeleteForm"
+ *       "delete" = "Drupal\backup_migrate\Form\EntityDeleteForm"
  *     },
  *   },
  *   links = {

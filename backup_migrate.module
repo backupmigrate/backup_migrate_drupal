@@ -170,8 +170,7 @@ function backup_migrate_backup_migrate_service_object_alter(BackupMigrateInterfa
   ));
 
   foreach (Source::loadMultiple() as $source) {
-    dd($source->getPlugin());
-    dd($source->getPlugin()->alterBackupMigrate($bam, $source->get('id'), $options));
+    $source->getPlugin()->alterBackupMigrate($bam, $source->get('id'), $options);
   }
 
   // Add an S3 destination.

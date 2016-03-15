@@ -28,7 +28,7 @@ use Drupal\backup_migrate\SettingsProfileInterface;
  *     "list_builder" = "Drupal\backup_migrate\Controller\SettingsProfileListBuilder",
  *     "form" = {
  *       "default" = "Drupal\backup_migrate\Form\SettingsProfileForm",
- *       "delete" = "Drupal\backup_migrate\Form\SettingsProfileDeleteForm"
+ *       "delete" = "Drupal\backup_migrate\Form\EntityDeleteForm"
  *     },
  *   },
  *   links = {
