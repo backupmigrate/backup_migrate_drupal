@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains BackupMigrate\Drupal\EntityPlugins\SourcePluginInterface
+ * Contains BackupMigrate\Drupal\EntityPlugins\DestinationPluginInterface
  */
 
 namespace BackupMigrate\Drupal\EntityPlugins;
@@ -11,4 +11,4 @@ namespace BackupMigrate\Drupal\EntityPlugins;
  *
  * @package BackupMigrate\Drupal\EntityPlugins
  */
-interface SourcePluginInterface extends WrapperPluginInterface {}
+interface DestinationPluginInterface extends WrapperPluginInterface {}

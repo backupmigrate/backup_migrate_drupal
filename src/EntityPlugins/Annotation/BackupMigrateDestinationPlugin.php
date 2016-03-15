@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\backup_migrate\EntityPlugins\Annotation\BackupMigrateSourcePlugin.
+ * Contains \Drupal\backup_migrate\EntityPlugins\Annotation\BackupMigrateDestinationPlugin.
  */
 
 namespace BackupMigrate\Drupal\EntityPlugins\Annotation;
@@ -12,11 +12,11 @@ use Drupal\Component\Annotation\Plugin;
 /**
  * Defines an source plugin annotation object.
  *
- * Plugin Namespace: Plugin\BackupMigrateSourcePlugin
+ * Plugin Namespace: Plugin\BackupMigrateDestinationPlugin
  *
  * @Annotation
  */
-class BackupMigrateSourcePlugin extends Plugin {
+class BackupMigrateDestinationPlugin extends Plugin {
 
   /**
    * The source plugin ID.

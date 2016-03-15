@@ -98,5 +98,5 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
    *
    * @return PluginManagerInterface
    */
-  abstract protected function getPluginManager();
+  abstract public function getPluginManager();
 }

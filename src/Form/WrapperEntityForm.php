@@ -8,6 +8,7 @@
 namespace Drupal\backup_migrate\Form;
 
 
+use BackupMigrate\Drupal\Config\DrupalConfigHelper;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -41,7 +42,37 @@ class WrapperEntityForm  extends EntityForm {
       '#disabled' => !$this->entity->isNew(),
     );
 
+    $form['type'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Type'),
+    );
+    foreach ($this->entity->getPluginManager()->getDefinitions() as $type) {
+      $form['type']['#options'][$type['id']] = $type['title'];
+    }
+
+    if ($bam_plugin = $this->entity->getObject()) {
+      $conf_schema = $bam_plugin->configSchema(['operation' => 'initialize']);
+      dd($bam_plugin);
+      $form['config'] = DrupalConfigHelper::buildFormFromSchemaSingle($conf_schema, $bam_plugin->config(), ['config']);
+    }
+
     return $form;
+  }
+
+  /**
+   * Returns an array of supported actions for the current entity form.
+   *
+   * @todo Consider introducing a 'preview' action here, since it is used by
+   *   many entity types.
+   */
+  protected function actions(array $form, FormStateInterface $form_state) {
+    $actions = parent::actions($form, $form_state);
+
+    if ($this->entity->isNew()) {
+      $actions['submit']['#value'] = $this->t('Save and edit');
+    }
+
+    return $actions;
   }
 
   /**

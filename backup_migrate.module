@@ -2,6 +2,7 @@
 use BackupMigrate\Core\Config\Config;
 use BackupMigrate\Core\Main\BackupMigrateInterface;
 use BackupMigrate\Core\Plugin\PluginManagerInterface;
+use Drupal\backup_migrate\Entity\Destination;
 use Drupal\backup_migrate\Entity\Schedule;
 use Drupal\backup_migrate\Entity\Source;
 
@@ -169,34 +170,15 @@ function backup_migrate_backup_migrate_service_object_alter(BackupMigrateInterfa
     ])
   ));
 
+  // Add the custom configured sources
   foreach (Source::loadMultiple() as $source) {
     $source->getPlugin()->alterBackupMigrate($bam, $source->get('id'), $options);
   }
 
-  // Add an S3 destination.
-//  $bam->plugins()->add(
-//    new \BackupMigrate\Drupal\Destination\DrupalS3Destination(
-//      new \BackupMigrate\Core\Config\Config(
-//        ['prefix' => 'path/to/backups'],
-//      ),
-//      new \BackupMigrate\Drupal\Destination\S3ReaderWriter([
-//        'credentials' => s3_get_credentials(),
-//      ]),
-//      new \BackupMigrate\Drupal\Destination\S3Writer(),
-//
-//    ), 'download');
-//
-//  // Add an File destination.
-//  $bam->plugins()->add(
-//    new \BackupMigrate\Drupal\Destination\FileDirectorySource(
-//      new \BackupMigrate\Drupal\Services\TarArchiveReader(),
-//      new \BackupMigrate\Drupal\Services\TarArchiveWriter(),
-//      new \BackupMigrate\Core\Config\Config(
-//        ['directory' => 'public://']
-//
-//      )
-//    ), 'files_public');
-
+  // Add the custom configured destination
+  foreach (Destination::loadMultiple() as $destination) {
+    $destination->getPlugin()->alterBackupMigrate($bam, $destination->get('id'), $options);
+  }
 
 }
 

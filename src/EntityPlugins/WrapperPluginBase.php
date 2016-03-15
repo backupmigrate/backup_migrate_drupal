@@ -7,6 +7,7 @@
 
 namespace BackupMigrate\Drupal\EntityPlugins;
 
+use BackupMigrate\Core\Config\Config;
 use BackupMigrate\Core\Main\BackupMigrateInterface;
 use Drupal\Component\Plugin\PluginBase;
 
@@ -38,9 +39,7 @@ abstract class WrapperPluginBase extends PluginBase implements WrapperPluginInte
   /**
    * {@inheritdoc}
    */
-  public function alterBackupMigrate(BackupMigrateInterface $bam, $key, $options = []) {
-    $bam->sources()->add($key, $this->getObject());
-  }
+  abstract public function alterBackupMigrate(BackupMigrateInterface $bam, $key, $options = []);
 
   /**
    * {@inheritdoc}
@@ -69,4 +68,14 @@ abstract class WrapperPluginBase extends PluginBase implements WrapperPluginInte
   public function calculateDependencies() {
     return array();
   }
+
+  /**
+   * Return a Backup and Migrate Config object with the plugin configuration.
+   *
+   * @return \BackupMigrate\Core\Config\Config
+   */
+  public function getConfig() {
+    return new Config($this->getConfiguration());
+  }
+
 }

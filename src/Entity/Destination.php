@@ -23,6 +23,7 @@ use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
  *     "id" = "id",
  *     "label" = "label",
  *     "uuid" = "uuid",
+ *     "type" = "type",
  *     "config" = "config"
  *   },
  *   admin_permission = "administer backup and migrate",
@@ -46,7 +47,7 @@ class Destination extends WrapperEntityBase {
    *
    * @return string
    */
-  protected function getPluginManager() {
+  public function getPluginManager() {
     return \Drupal::service('plugin.manager.backup_migrate_destination');
   }
 }

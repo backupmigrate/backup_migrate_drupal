@@ -52,7 +52,7 @@ class Source extends WrapperEntityBase {
    *
    * @return string
    */
-  protected function getPluginManager() {
-    return \Drupal::service('plugin.manager.backup_migrate_sources');
+  public function getPluginManager() {
+    return \Drupal::service('plugin.manager.backup_migrate_source');
   }
 }
