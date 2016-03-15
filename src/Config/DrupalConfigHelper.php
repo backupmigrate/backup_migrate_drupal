@@ -72,7 +72,7 @@ class DrupalConfigHelper {
    */
   static public function buildFormFromSchema($schema, ConfigInterface $config, $parents = [], $form = []) {
     $form = [];
-    DrupalConfigHelper::addFieldsFromSchema($schema, $config, $parents);
+    DrupalConfigHelper::addFieldsFromSchema($form, $schema, $config, $parents);
     return $form;
   }
 
