@@ -114,7 +114,7 @@ class DrupalConfigHelper {
           if (!empty($item['multiple'])) {
             $form_item['#type'] = 'textarea';
             $form_item['#description'] .= ' ' . t('Add one item per line.');
-            $form_item['#element_validate'] = [[new DrupalConfigHelper, 'validateMultiText']];
+            $form_item['#element_validate'] = ['BackupMigrate\Drupal\Config\DrupalConfigHelper::validateMultiText'];
             $value  = implode("\n", $value);
           }
           if (!empty($item['multiline'])) {
@@ -123,6 +123,7 @@ class DrupalConfigHelper {
           break;
         case 'password':
           $form_item['#type'] = 'password';
+          $form_item['#value_callback'] = 'BackupMigrate\Drupal\Config\DrupalConfigHelper::valueCallbackSecret';
           break;
         case 'number':
           $form_item['#type'] = 'textfield';
@@ -179,6 +180,22 @@ class DrupalConfigHelper {
    */
   public static function validateMultiText(&$element, FormStateInterface &$form_state) {
     $form_state->setValueForElement($element, array_map('trim', explode("\n", $element['#value'])));
+  }
+
+  /**
+   * A value mapping callback that replaces missing secrets because the Form API
+   * does not preserve the default values of password inputs.
+   *
+   * @param $element
+   * @param $input
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   */
+  public static function valueCallbackSecret(&$element, $input, FormStateInterface $form_state) {
+    dd($element);
+    if (empty($input)) {
+      return $element['#default_value'];
+    }
+    return $input;
   }
 
   /**
