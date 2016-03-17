@@ -14,7 +14,7 @@ use BackupMigrate\Drupal\EntityPlugins\SourcePluginBase;
  * @BackupMigrateSourcePlugin(
  *   id = "MySQL",
  *   title = @Translation("MySQL Database"),
- *   description = @Translation("Back up MySQL compatible databases."),
+ *   description = @Translation("Back up a MySQL compatible database."),
  *   wrapped_class = "\BackupMigrate\Core\Source\MySQLiSource"
  * )
  */

@@ -14,7 +14,7 @@ use BackupMigrate\Drupal\EntityPlugins\SourcePluginBase;
  * @BackupMigrateSourcePlugin(
  *   id = "FileDirectory",
  *   title = @Translation("File Directory"),
- *   description = @Translation("Back up a file directory."),
+ *   description = @Translation("Back up a server file directory."),
  *   wrapped_class = "\BackupMigrate\Core\Source\FileDirectorySource"
  * )
  */
