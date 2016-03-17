@@ -75,7 +75,10 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
    *   store their configuration.
    */
   public function getPluginCollections() {
-    return ['config' => $this->getPluginCollection()];
+    if ($config = $this->getPluginCollection()) {
+      return ['config' => $config];
+    }
+    return [];
   }
 
   /**

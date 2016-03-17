@@ -42,17 +42,29 @@ class WrapperEntityForm  extends EntityForm {
       '#disabled' => !$this->entity->isNew(),
     );
 
-    $form['type'] = array(
-      '#type' => 'select',
-      '#title' => $this->t('Type'),
-    );
-    foreach ($this->entity->getPluginManager()->getDefinitions() as $type) {
-      $form['type']['#options'][$type['id']] = $type['title'];
+    if (!$this->entity->get('type')) {
+      $form['type'] = array(
+        '#type' => 'radios',
+        '#title' => $this->t('Type'),
+      );
+      foreach ($this->entity->getPluginManager()->getDefinitions() as $type) {
+        $form['type']['#options'][$type['id']] = $type['title'];
+        $form['type'][$type['id']]['#description'] = $type['description'];
+      }
+    }
+    else {
+      $type = $this->entity->getPlugin()->getPluginDefinition();
+      $form['type'] = array(
+        '#type' => 'value',
+        '#value' => $type['id'],
+        '#markup' => $this->t("Type: @type", ['@type' => $type['title']])
+      );
+
+      if ($bam_plugin = $this->entity->getObject()) {
+        $form['config'] = DrupalConfigHelper::buildPluginForm($bam_plugin, 'initialize', ['config']);
+      }
     }
 
-    if ($bam_plugin = $this->entity->getObject()) {
-      $form['config'] = DrupalConfigHelper::buildPluginForm($bam_plugin, 'initialize', ['config']);
-    }
 
     return $form;
   }
