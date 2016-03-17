@@ -20,6 +20,7 @@ class DestinationListBuilder extends ConfigEntityListBuilder {
   public function buildHeader() {
     $header['label'] = $this->t('Backup Destination');
     $header['id'] = $this->t('Machine name');
+    $header['type'] = $this->t('Type');
     return $header + parent::buildHeader();
   }
 
@@ -29,7 +30,12 @@ class DestinationListBuilder extends ConfigEntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     $row['label'] = $entity->label();
     $row['id'] = $entity->id();
-    // You probably want a few more properties here...
+    $row['type'] = $entity->get('type');
+    if ($plugin = $entity->getPlugin()) {
+      $info = $plugin->getPluginDefinition();
+      $row['type'] = $info['title'];
+    }
+
     return $row + parent::buildRow($entity);
   }
 
