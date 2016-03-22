@@ -142,13 +142,13 @@ class Schedule extends ConfigEntityBase {
    *
    * @param int $seconds
    * @return array An array containing the period definition and the number of them.
-   *  ['units' => 123, 'type' => [...]]
+   *  ['number' => 123, 'type' => [...]]
    * @throws \BackupMigrate\Core\Exception\BackupMigrateException
    */
-  protected static function secondsToPeriod($seconds) {
+  public static function secondsToPeriod($seconds) {
     foreach (array_reverse(Schedule::getPeriodTypes()) as $type) {
       if (($seconds % $type['seconds']) === 0) {
-        return ['units' => $seconds / $type['seconds'], 'type' => $type];
+        return ['number' => $seconds / $type['seconds'], 'type' => $type];
       }
     }
 
@@ -162,8 +162,8 @@ class Schedule extends ConfigEntityBase {
    * @return mixed
    * @throws \BackupMigrate\Core\Exception\BackupMigrateException
    */
-  protected static function periodToSeconds($period) {
-    return $period['units'] * $period['type']['seconds'];
+  public static function periodToSeconds($period) {
+    return $period['number'] * $period['type']['seconds'];
   }
 
   /**
@@ -172,8 +172,8 @@ class Schedule extends ConfigEntityBase {
    * @param $period
    * @return \Drupal\Core\StringTranslation\PluralTranslatableMarkup
    */
-  protected static function formatPeriod($period) {
-    return \Drupal::translation()->formatPlural($period['units'], $period['type']['singular'], $period['type']['plural']);
+  public static function formatPeriod($period) {
+    return \Drupal::translation()->formatPlural($period['number'], $period['type']['singular'], $period['type']['plural']);
   }
 
   /**
@@ -182,7 +182,7 @@ class Schedule extends ConfigEntityBase {
    *
    * @return array
    */
-  protected static function getPeriodTypes() {
+  public static function getPeriodTypes() {
     return array(
       'seconds' => array('type' => 'seconds', 'seconds' => 1, 'title' => 'Seconds', 'singular' => 'Once a second', 'plural' => 'Every @count seconds'),
       'minutes' => array('type' => 'minutes', 'seconds' => 60, 'title' => 'Minutes', 'singular' => 'Once a minute', 'plural' => 'Every @count minutes'),
@@ -190,6 +190,16 @@ class Schedule extends ConfigEntityBase {
       'days' => array('type' => 'days', 'seconds' => 86400, 'title' => 'Days', 'singular' => 'Daily', 'plural' => 'Every @count days'),
       'weeks' => array('type' => 'weeks', 'seconds' => 604800, 'title' => 'Weeks', 'singular' => 'Weekly', 'plural' => 'Every @count weeks'),
     );
+  }
+
+  /**
+   * Get a backup period type given it's key.
+   *
+   * @param string $type
+   * @return array
+   */
+  public static function getPeriodType($type) {
+    return Schedule::getPeriodTypes()[$type];
   }
 
 }
