@@ -49,6 +49,9 @@ backup_migrate.backup_migrate_schedule.*:
     destination_id:
       type: string
       label: 'Destination'
+    settings_profile_id:
+      type: string
+      label: 'Settings Profile'
 
 backup_migrate.backup_migrate_settings.*:
   type: config_entity
@@ -62,6 +65,44 @@ backup_migrate.backup_migrate_settings.*:
       label: 'Label'
     uuid:
       type: string
+    config:
+      type: mapping
+      label: 'Configuration'
+
+backup_migrate.backup_migrate_destination.*:
+  type: config_entity
+  label: 'Backup Destination'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    type:
+      type: string
+      label: 'Destination Type'
+    config:
+      type: mapping
+      label: 'Configuration'
+
+backup_migrate.backup_migrate_source.*:
+  type: config_entity
+  label: 'Backup Source'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    type:
+      type: string
+      label: 'Source Type'
     config:
       type: mapping
       label: 'Configuration'

@@ -16,11 +16,6 @@ use BackupMigrate\Core\Source\FileDirectorySource;
  * @package BackupMigrate\Drupal\Source
  */
 class DrupalPublicFilesSource extends FileDirectorySource {
-
-  // @TODO: Add configuration defaults for excluded files
-  // @TODO: Allow modules to add their own excluded defaults
-  // @TODO: Fix the directory to 'public://'
-
   /**
    * Get the default values for the plugin.
    *
@@ -28,12 +23,6 @@ class DrupalPublicFilesSource extends FileDirectorySource {
    */
   public function configDefaults() {
     $config = [
-      'exclude_filepaths' => [
-        'js',
-        'css',
-        'php',
-        '.htaccess',
-      ],
       'directory' => 'public://',
     ];
 

@@ -46,8 +46,8 @@ class SettingsProfileForm extends EntityForm {
 
     $bam = backup_migrate_get_service_object($backup_migrate_settings->get('config'));
 
-    $conf_schema = $bam->plugins()->map('configSchema', array('operation' => 'backup'));
-    $form['config'] = DrupalConfigHelper::buildFormFromSchema($conf_schema, $bam->plugins()->config(), ['config']);
+    $form['config'] = DrupalConfigHelper::buildAllPluginsForm($bam->plugins(), 'backup', ['config']);
+
 
     return $form;
   }

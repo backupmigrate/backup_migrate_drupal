@@ -28,3 +28,23 @@ backup_migrate.settings:
   route_name: entity.backup_migrate_settings.collection
   base_route: backup_migrate.quick_backup
 
+backup_migrate.settings_profiles:
+  title: Settings Profiles
+  route_name: entity.backup_migrate_settings.collection
+  base_route: backup_migrate.quick_backup
+  parent_id: backup_migrate.settings
+
+
+backup_migrate.destination:
+  title: Destinations
+  route_name: entity.backup_migrate_destination.collection
+  base_route: backup_migrate.quick_backup
+  parent_id: backup_migrate.settings
+
+
+backup_migrate.source:
+  title: Sources
+  route_name: entity.backup_migrate_source.collection
+  base_route: backup_migrate.quick_backup
+  parent_id: backup_migrate.settings
+

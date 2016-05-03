@@ -11,13 +11,12 @@ use BackupMigrate\Core\Config\Config;
 use BackupMigrate\Core\Plugin\FileProcessorInterface;
 use BackupMigrate\Core\Plugin\FileProcessorTrait;
 use BackupMigrate\Core\Plugin\PluginBase;
-use BackupMigrate\Core\Translation\TranslatableTrait;
 
 /**
  * Class DatabaseSource
  * @package BackupMigrate\Core\Source
  */
-abstract class DatabaseSource  extends PluginBase implements SourceInterface, FileProcessorInterface
+abstract class DatabaseSource  extends PluginBase implements DatabaseSourceInterface, FileProcessorInterface
 {
   use FileProcessorTrait;
 
@@ -29,33 +28,9 @@ abstract class DatabaseSource  extends PluginBase implements SourceInterface, Fi
    */
   public function configSchema($params = array()) {
     $schema = array();
-    // @TODO: make this the id of the source.
-    $group = 'db';
-
-    // Backup settings.
-    if ($params['operation'] == 'backup') {
-      $table_select = [
-        'group' => $group,
-        'type' => 'enum',
-        'multiple' => true,
-        'options' => $this->getTableNames(),
-        'actions' => ['backup']
-      ];
-      $schema['fields']['exclude_tables'] = $table_select + [
-          'title' => $this->t('Exclude these tables entirely'),
-        ];
-
-      $schema['fields']['nodata_tables'] = $table_select + [
-          'title' => $this->t('Exclude data from these tables'),
-        ];
-      $schema['groups'][$group] = array(
-        // @TODO: Make this the title of the source.
-        'title' => 'Database Settings',
-      );
-    }
 
     // Init settings.
-    else if ($params['operation'] == 'initialize') {
+    if ($params['operation'] == 'initialize') {
       $schema['fields']['host'] = [
         'type' => 'text',
         'title' => 'Hostname'
@@ -99,7 +74,13 @@ abstract class DatabaseSource  extends PluginBase implements SourceInterface, Fi
    * Get a list of tables in this source
    */
   public function getTableNames() {
-    return $this->_getTableNames();
+    try {
+      return $this->_getTableNames();
+    }
+    catch (\Exception $e) {
+      // Todo: Log this exception
+      return [];
+    }
   }
 
   /**
@@ -109,7 +90,13 @@ abstract class DatabaseSource  extends PluginBase implements SourceInterface, Fi
    * @return array
    */
   public function getTables() {
-    return $this->_getTables();
+    try {
+      return $this->_getTables();
+    }
+    catch (\Exception $e) {
+      // Todo: Log this exception
+      return [];
+    }
   }
 
 

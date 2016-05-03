@@ -49,13 +49,12 @@ class ScheduleForm extends EntityForm {
     );
 
     $bam = backup_migrate_get_service_object([], ['nobrowser' => TRUE]);
-    $form['source_id'] = DrupalConfigHelper::getPluginSelector(
-      $bam->plugins()->getAllByOp('exportToFile'), t('Backup Source'));
-    $form['source_id']['source_id']['#default_value'] = $backup_migrate_schedule->get('source_id');
+    $form['source_id'] = DrupalConfigHelper::getSourceSelector($bam, t('Backup Source'));
+    $form['destination_id'] = DrupalConfigHelper::getDestinationSelector($bam, t('Backup Destination'));
 
-    $form['destination_id'] = DrupalConfigHelper::getPluginSelector(
-      $bam->plugins()->getAllByOp('saveFile'), t('Backup Destination'));
-    $form['source_id']['destination_id']['#default_value'] = $backup_migrate_schedule->get('destination_id');
+    $form['settings_profile_id'] =
+      DrupalConfigHelper::getSettingsProfileSelector(t('Settings Profile'));
+
 
     $form['period'] = array(
       '#type' => 'textfield',

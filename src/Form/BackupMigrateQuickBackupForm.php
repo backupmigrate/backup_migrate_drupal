@@ -8,6 +8,7 @@
 namespace Drupal\backup_migrate\Form;
 
 use BackupMigrate\Drupal\Config\DrupalConfigHelper;
+use Drupal\backup_migrate\Entity\SettingsProfile;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -44,11 +45,9 @@ class BackupMigrateQuickBackupForm extends FormBase {
       "#tree" => FALSE,
     );
 
-    $form['quickbackup']['source_id'] = DrupalConfigHelper::getPluginSelector(
-      $bam->plugins()->getAllByOp('exportToFile'), t('Backup Source'));
-    $form['quickbackup']['destination_id'] = DrupalConfigHelper::getPluginSelector(
-      $bam->plugins()->getAllByOp('saveFile'), t('Backup Destination'));
-
+    $form['quickbackup']['source_id'] = DrupalConfigHelper::getSourceSelector($bam, t('Backup Source'));
+    $form['quickbackup']['destination_id'] = DrupalConfigHelper::getDestinationSelector($bam, t('Backup Destination'));
+    $form['quickbackup']['settings_profile_id'] = DrupalConfigHelper::getSettingsProfileSelector(t('Settings Profile'));
 
     // Create the service
 //    $bam = backup_migrate_get_service_object();
@@ -78,8 +77,15 @@ class BackupMigrateQuickBackupForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $form_state->getValues();
-    backup_migrate_perform_backup($config['source_id'], $config['destination_id']);
+    $values = $form_state->getValues();
+    $config = [];
+
+    // Load the settings profile if one is selected.
+    if ($values['settings_profile_id']) {
+      $config = SettingsProfile::load($values['settings_profile_id'])->get('config');
+    }
+
+    backup_migrate_perform_backup($values['source_id'], $values['destination_id'], $config);
   }
 
 

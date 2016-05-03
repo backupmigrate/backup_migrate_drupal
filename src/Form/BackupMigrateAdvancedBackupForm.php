@@ -43,14 +43,10 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
       "#collapsed" => FALSE,
       "#tree" => FALSE,
     );
-    $form['source']['source_id'] = DrupalConfigHelper::getPluginSelector(
-        $bam->plugins()->getAllByOp('exportToFile'), t('Backup Source'));
-
+    $form['source']['source_id'] = DrupalConfigHelper::getSourceSelector($bam, t('Backup Source'));
     $form['source']['source_id']['#default_value'] = \Drupal::config('backup_migrate.settings')->get('backup_migrate_source_id');
 
-
-    $conf_schema = $bam->plugins()->map('configSchema', array('operation' => 'backup'));
-    $form += DrupalConfigHelper::buildFormFromSchema($conf_schema, $bam->plugins()->config());
+    $form += DrupalConfigHelper::buildAllPluginsForm($bam->plugins(), 'backup');
 
     $form['destination'] = array(
       '#type' => 'fieldset',
@@ -60,9 +56,7 @@ class BackupMigrateAdvancedBackupForm extends FormBase {
       "#tree" => FALSE,
     );
 
-    $form['destination']['destination_id'] = DrupalConfigHelper::getPluginSelector(
-      $bam->plugins()->getAllByOp('saveFile'), t('Backup Destination'));
-
+    $form['destination']['destination_id'] = DrupalConfigHelper::getDestinationSelector($bam, t('Backup Destination'));
     $form['destination']['destination_id']['#default_value'] = \Drupal::config('backup_migrate.settings')->get('backup_migrate_destination_id');
 
     $form['quickbackup']['submit'] = array(

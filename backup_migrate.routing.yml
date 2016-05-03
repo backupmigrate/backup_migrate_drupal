@@ -22,6 +22,8 @@ backup_migrate.restore:
    requirements:
      _permission: 'restore from backup'
 
+
+# Schedule
 entity.backup_migrate_schedule.collection:
    path: '/admin/config/development/backup_migrate/schedule'
    defaults:
@@ -55,6 +57,8 @@ entity.backup_migrate_schedule.delete_form:
      _permission: 'administer backup and migrate'
 
 
+
+# Settings Profile
 entity.backup_migrate_settings.collection:
    path: '/admin/config/development/backup_migrate/settings'
    defaults:
@@ -87,3 +91,70 @@ entity.backup_migrate_settings.delete_form:
    requirements:
      _permission: 'administer backup and migrate'
 
+
+# Backup Destination
+entity.backup_migrate_destination.collection:
+   path: '/admin/config/development/backup_migrate/settings/destination'
+   defaults:
+     _entity_list: 'backup_migrate_destination'
+     _title: 'Backup Destination'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_destination.add_form:
+   path: '/admin/config/development/backup_migrate/settings/destination/add'
+   defaults:
+     _entity_form: backup_migrate_destination.default
+     _title: 'Add destination'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_destination.edit_form:
+   path: '/admin/config/development/backup_migrate/settings/destination/edit/{backup_migrate_destination}'
+   defaults:
+    _entity_form: backup_migrate_destination.default
+    _title: 'Edit destination'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_destination.delete_form:
+   path: '/admin/config/development/backup_migrate/settings/destination/delete/{backup_migrate_destination}'
+   defaults:
+    _entity_form: backup_migrate_destination.delete
+    _title: 'Delete destination'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+
+# Backup Source
+entity.backup_migrate_source.collection:
+   path: '/admin/config/development/backup_migrate/settings/source'
+   defaults:
+     _entity_list: 'backup_migrate_source'
+     _title: 'Backup sources'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_source.add_form:
+   path: '/admin/config/development/backup_migrate/settings/source/add'
+   defaults:
+     _entity_form: backup_migrate_source.default
+     _title: 'Add Backup Source'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_source.edit_form:
+   path: '/admin/config/development/backup_migrate/settings/source/edit/{backup_migrate_source}'
+   defaults:
+    _entity_form: backup_migrate_source.default
+    _title: 'Edit source'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+entity.backup_migrate_source.delete_form:
+   path: '/admin/config/development/backup_migrate/settings/source/delete/{backup_migrate_source}'
+   defaults:
+    _entity_form: backup_migrate_source.delete
+    _title: 'Delete source'
+   requirements:
+     _permission: 'administer backup and migrate'

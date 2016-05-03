@@ -7,45 +7,52 @@
 
 namespace BackupMigrate\Core\Main;
 
-use \BackupMigrate\Core\Config\ConfigInterface;
-use \BackupMigrate\Core\Service\EnvironmentInterface;
+use BackupMigrate\Core\Config\ConfigInterface;
+use BackupMigrate\Core\Plugin\PluginManagerInterface;
 use BackupMigrate\Core\Exception\BackupMigrateException;
-use BackupMigrate\Core\Main\BackupMigrateInterface;
-use \BackupMigrate\Core\Plugin\PluginCallerInterface;
-use \BackupMigrate\Core\Plugin\PluginCallerTrait;
-use \BackupMigrate\Core\Plugin\PluginManager;
+use BackupMigrate\Core\Plugin\PluginCallerInterface;
+use BackupMigrate\Core\Plugin\PluginCallerTrait;
+use BackupMigrate\Core\Plugin\PluginManager;
+use BackupMigrate\Core\Service\ServiceManager;
 
 /**
  * The core Backup and Migrate service.
- *
- * Usage:
- *   $config = new ConfigBase(...);
- *   $plugins = new PluginManager($config);
- *
- *   $plugins->add(new MySQLSource(...), 'db');
- *   $plugins->add(new MySQLSource(...), 'another');
- *   $plugins->add(new DirectoryDestination(...), 'manual');
- *   $plugins->add(new CompressionPlugin(), 'encryption');
- *
- *   $bam = new BackupMigrate($plugins);
- *   $bam->backup($from, to);
  */
 class BackupMigrate implements BackupMigrateInterface, PluginCallerInterface
 {
   use PluginCallerTrait;
 
   /**
+   * @var \BackupMigrate\Core\Plugin\PluginManagerInterface;
+   */
+  protected $sources;
+
+  /**
+   * @var \BackupMigrate\Core\Plugin\PluginManagerInterface;
+   */
+  protected $destinations;
+
+  /**
+   * @var ServiceManager The service locator for this object.
+   */
+  protected $services;
+
+  /**
    * {@inheritdoc}
    * @param \BackupMigrate\Core\Config\ConfigInterface $config
-   * @param \BackupMigrate\Core\Service\ServiceLocatorInterface $services
+   * @param \BackupMigrate\Core\Service\ServiceManagerInterface $services
    */
-  function __construct(PluginManager $plugins = NULL) {
-    if ($plugins == NULL) {
-      $plugins = new PluginManager();
-    }
-    $this->setPluginManager($plugins);
-  }
+  function __construct() {
+    $this->setServiceManager(new ServiceManager());
+    $services = $this->services();
 
+    $services->add('PluginManager', new PluginManager($services));
+    $services->add('SourceManager', new PluginManager($services));
+    $services->add('DestinationManager', new PluginManager($services));
+
+    // Add these services back into this object using the service manager.
+    $services->addClient($this);
+  }
 
   /**
    * {@inheritdoc}
@@ -57,12 +64,12 @@ class BackupMigrate implements BackupMigrateInterface, PluginCallerInterface
       $this->plugins()->call('setUp', 'backup', $source_id, $destination_id);
 
       // Get the source and the destination to use.
-      $source = $this->plugins()->get($source_id);
+      $source = $this->sources()->get($source_id);
       $destinations = array();
 
       // Allow a single destination or multiple destinations.
       foreach ((array)$destination_id as $id) {
-        $destinations[$id] = $this->plugins()->get($id);
+        $destinations[$id] = $this->destinations()->get($id);
 
         // Check that the destination is valid.
         if (!$destinations[$id]) {
@@ -115,8 +122,8 @@ class BackupMigrate implements BackupMigrateInterface, PluginCallerInterface
   public function restore($source_id, $destination_id, $file_id = NULL) {
     try {
       // Get the source and the destination to use.
-      $source = $this->plugins()->get($source_id);
-      $destination = $this->plugins()->get($destination_id);
+      $source = $this->sources()->get($source_id);
+      $destination = $this->destinations()->get($destination_id);
 
       if (!$source) {
         throw new BackupMigrateException('The source !id does not exist.', array('!id' => $source_id));
@@ -166,4 +173,57 @@ class BackupMigrate implements BackupMigrateInterface, PluginCallerInterface
     $this->plugins()->setConfig($config);
   }
 
+  /**
+   * Get the list of available destinations.
+   *
+   * @return PluginManagerInterface
+   */
+  public function destinations() {
+    return $this->destinations;
+  }
+
+  /**
+   * Set the destinations plugin manager.
+   *
+   * @param PluginManagerInterface $destinations
+   */
+  public function setDestinationManager(PluginManagerInterface $destinations) {
+    $this->destinations = $destinations;
+  }
+
+  /**
+   * Get the list of sources.
+   *
+   * @return PluginManagerInterface
+   */
+  public function sources() {
+    return $this->sources;
+  }
+
+  /**
+   * Set the sources plugin manager.
+   *
+   * @param PluginManagerInterface $sources
+   */
+  public function setSourceManager(PluginManagerInterface $sources) {
+    $this->sources = $sources;
+  }
+
+  /**
+   * Get the service locator.
+   *
+   * @return ServiceManager
+   */
+  public function services() {
+    return $this->services;
+  }
+
+  /**
+   * Set the service locator.
+   *
+   * @param ServiceManager $services
+   */
+  public function setServiceManager($services) {
+    $this->services = $services;
+  }
 }

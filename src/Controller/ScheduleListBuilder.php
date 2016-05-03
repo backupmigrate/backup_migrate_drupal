@@ -63,29 +63,6 @@ class ScheduleListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity) {
-    $operations = parent::getDefaultOperations($entity);
-
-    if ($entity->hasLinkTemplate('edit-form')) {
-      $operations['edit'] = array(
-        'title' => t('Edit schedule'),
-        'weight' => 20,
-        'url' => $entity->urlInfo('edit-form'),
-      );
-    }
-    if ($entity->hasLinkTemplate('delete-form')) {
-      $operations['delete'] = array(
-        'title' => t('Delete schedule'),
-        'weight' => 30,
-        'url' => $entity->urlInfo('delete-form'),
-      );
-    }
-    return $operations;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 

@@ -6,18 +6,18 @@
         "source": {
             "type": "git",
             "url": "https://github.com/php-fig/log.git",
-            "reference": "9e45edca52cc9c954680072c93e621f8b71fab26"
+            "reference": "d8e60a5619fff77f9669da8997697443ef1a1d7e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/log/zipball/9e45edca52cc9c954680072c93e621f8b71fab26",
-            "reference": "9e45edca52cc9c954680072c93e621f8b71fab26",
+            "url": "https://api.github.com/repos/php-fig/log/zipball/d8e60a5619fff77f9669da8997697443ef1a1d7e",
+            "reference": "d8e60a5619fff77f9669da8997697443ef1a1d7e",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2015-06-02 13:48:41",
+        "time": "2016-01-06 21:40:42",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -41,6 +41,7 @@
             }
         ],
         "description": "Common interface for logging libraries",
+        "homepage": "https://github.com/php-fig/log",
         "keywords": [
             "log",
             "psr",
@@ -54,12 +55,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/backupmigrate/backup_migrate_core.git",
-            "reference": "8e6560b38a990c9f62072660675c9f617d662e8e"
+            "reference": "c027281c5de06af92520764a302a02a8d60949f4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/backupmigrate/backup_migrate_core/zipball/8e6560b38a990c9f62072660675c9f617d662e8e",
-            "reference": "8e6560b38a990c9f62072660675c9f617d662e8e",
+            "url": "https://api.github.com/repos/backupmigrate/backup_migrate_core/zipball/c027281c5de06af92520764a302a02a8d60949f4",
+            "reference": "c027281c5de06af92520764a302a02a8d60949f4",
             "shasum": ""
         },
         "require": {
@@ -71,7 +72,7 @@
             "phpunit/dbunit": "~1.4",
             "phpunit/phpunit": "~4.0"
         },
-        "time": "2015-12-09 18:16:15",
+        "time": "2016-03-17 03:54:58",
         "type": "library",
         "installation-source": "source",
         "autoload": {
