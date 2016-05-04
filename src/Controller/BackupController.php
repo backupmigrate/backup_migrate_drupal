@@ -24,6 +24,10 @@ class BackupController extends ControllerBase {
   var $destination;
 
 
+  public function listAllTitle(Destination $backup_migrate_destination) {
+    return $this->t('Backups in @destination_name', ['@destination_name' => $backup_migrate_destination->label()]);
+  }
+
   /**
    * @param \BackupMigrate\Core\Destination\ListableDestinationInterface $destination
    */
