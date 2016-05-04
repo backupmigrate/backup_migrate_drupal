@@ -8,6 +8,7 @@ namespace Drupal\backup_migrate\Controller;
 
 use BackupMigrate\Core\Destination\DestinationInterface;
 use BackupMigrate\Core\Destination\ListableDestinationInterface;
+use BackupMigrate\Drupal\Destination\DrupalBrowserDownloadDestination;
 use Drupal\backup_migrate\Entity\Destination;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
@@ -29,7 +30,11 @@ class BackupController extends ControllerBase {
   }
 
   /**
-   * @param \BackupMigrate\Core\Destination\ListableDestinationInterface $destination
+   * List the backups in the given destination.
+   *
+   * @param \Drupal\backup_migrate\Entity\Destination $backup_migrate_destination
+   * @return mixed
+   * @internal param \BackupMigrate\Core\Destination\ListableDestinationInterface $destination
    */
   public function listAll(Destination $backup_migrate_destination) {
     $destination = $backup_migrate_destination->getObject();
@@ -110,28 +115,20 @@ class BackupController extends ControllerBase {
   }
 
   /**
-   * @param \Drupal\backup_migrate\Entity\Destination $backup_migrate_destination
-   * @param $backup_id
-   */
-  public function delete(Destination $backup_migrate_destination, $backup_id) {
-
-  }
-
-  /**
+   * Download a backup via the browser.
+   *
    * @param \Drupal\backup_migrate\Entity\Destination $backup_migrate_destination
    * @param $backup_id
    */
   public function download(Destination $backup_migrate_destination, $backup_id) {
+    $destination = $backup_migrate_destination->getObject();
+    $file = $destination->getFile($backup_id);
+    $file = $destination->loadFileForReading($file);
 
+    $browser = new DrupalBrowserDownloadDestination();
+    $browser->saveFile($file);
   }
 
-  /**
-   * @param \Drupal\backup_migrate\Entity\Destination $backup_migrate_destination
-   * @param $backup_id
-   */
-  public function restore(Destination $backup_migrate_destination, $backup_id) {
-
-  }
 
 }
 
