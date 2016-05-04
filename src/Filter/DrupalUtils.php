@@ -18,7 +18,6 @@ use Drupal\Core\Database\Database;
  * @package BackupMigrate\Drupal\Filter
  */
 class DrupalUtils extends PluginBase {
-  use TranslatableTrait;
 
   /**
    * @var boolean Whether the site was put in maintenance mode before the operation.

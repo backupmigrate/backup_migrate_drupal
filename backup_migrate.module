@@ -94,11 +94,11 @@ function backup_migrate_get_service_object($config_array = [], $options = []) {
  * @param array $options
  */
 function backup_migrate_backup_migrate_service_object_alter(BackupMigrateInterface &$bam, $options = []) {
-  $sources = &$bam->sources();
-  $destinations = &$bam->destinations();
-  $plugins = &$bam->plugins();
+  $sources = $bam->sources();
+  $destinations = $bam->destinations();
+  $plugins = $bam->plugins();
 
-  $services = &$bam->services();
+  $services = $bam->services();
 
   // Add a temp file manager which can access the drupal temp directory.
   $services->add('TempFileAdapter',

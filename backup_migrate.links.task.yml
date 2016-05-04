@@ -8,6 +8,11 @@ backup_migrate.restore:
   route_name: backup_migrate.restore
   base_route: backup_migrate.quick_backup
 
+backup_migrate.backups:
+  title: Saved Backups
+  route_name: backup_migrate.backups
+  base_route: backup_migrate.quick_backup
+
 backup_migrate.quick_backup_sub:
   title: Quick Backup
   route_name: backup_migrate.quick_backup

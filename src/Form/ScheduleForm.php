@@ -8,6 +8,7 @@
 namespace Drupal\backup_migrate\Form;
 
 use BackupMigrate\Drupal\Config\DrupalConfigHelper;
+use Drupal\backup_migrate\Entity\Schedule;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
@@ -55,14 +56,37 @@ class ScheduleForm extends EntityForm {
     $form['settings_profile_id'] =
       DrupalConfigHelper::getSettingsProfileSelector(t('Settings Profile'));
 
-
-    $form['period'] = array(
-      '#type' => 'textfield',
+    $period = Schedule::secondsToPeriod($backup_migrate_schedule->get('period'));
+    $form['period_container'] = array(
+      // Reset #parents so the additional container does not appear.
+      '#parents' => array(),
+      '#type' => 'fieldset',
       '#title' => $this->t('Frequency'),
-      '#default_value' => $backup_migrate_schedule->get('period'),
-      '#field_suffix' => $this->t('Seconds'),
-      '#size' => 10,
+      '#field_prefix' => $this->t('Run every'),
+      '#attributes' => array('class' => array(
+        'container-inline',
+        'fieldgroup',
+        'form-composite'
+      )),
     );
+    $form['period_container']['period_number'] = array(
+      '#type' => 'number',
+      '#default_value' => $period['number'],
+      '#min' => 1,
+      '#title' => $this->t('Period number'),
+      '#title_display' => 'invisible',
+      '#size' => 2,
+    );
+    $form['period_container']['period_type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Period type'),
+      '#title_display' => 'invisible',
+      '#options' => [],
+      '#default_value' => $period['type'],
+    ];
+    foreach (Schedule::getPeriodTypes() as $key => $type) {
+      $form['period_container']['period_type']['#options'][$key] = $type['title'];
+    }
 
 //    $form['keep'] = array(
 //      '#type' => 'textfield',
@@ -73,6 +97,19 @@ class ScheduleForm extends EntityForm {
 //    );
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildEntity(array $form, FormStateInterface $form_state) {
+    // Save period.
+    $type = Schedule::getPeriodType($form_state->getValue('period_type'));
+    $seconds = Schedule::periodToSeconds(['number' => $form_state->getValue('period_number'), 'type' => $type]);
+
+    $form_state->setValue('period', $seconds);
+
+    return parent::buildEntity($form, $form_state);
   }
 
   /**

@@ -39,4 +39,26 @@ class DestinationListBuilder extends ConfigEntityListBuilder {
     return $row + parent::buildRow($entity);
   }
 
+  /**
+   * Gets this list's default operations.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity the operations are for.
+   *
+   * @return array
+   *   The array structure is identical to the return value of
+   *   self::getOperations().
+   */
+  public function getDefaultOperations(EntityInterface $entity) {
+    $operations = parent::getDefaultOperations($entity);
+    if ($entity->access('backups') && $entity->hasLinkTemplate('backups')) {
+      $operations['backups'] = array(
+        'title' => $this->t('List Backups'),
+        'weight' => 100,
+        'url' => $entity->toUrl('backups'),
+      );
+    }
+
+    return $operations;
+  }
 }
