@@ -23,6 +23,17 @@ backup_migrate.restore:
      _permission: 'restore from backup'
 
 
+# Backups
+backup_migrate.backups:
+   path: '/admin/config/development/backup_migrate/backups'
+   defaults:
+     _controller: '\Drupal\backup_migrate\Controller\BackupController::listAll'
+     _title: 'Backups'
+   requirements:
+     _permission: 'administer backup and migrate'
+
+
+
 # Schedule
 entity.backup_migrate_schedule.collection:
    path: '/admin/config/development/backup_migrate/schedule'
@@ -128,8 +139,8 @@ entity.backup_migrate_destination.delete_form:
 entity.backup_migrate_destination.backups:
    path: '/admin/config/development/backup_migrate/settings/destination/backups/{backup_migrate_destination}'
    defaults:
-     _controller: '\Drupal\backup_migrate\Controller\BackupController::listAll'
-     _title_callback: '\Drupal\backup_migrate\Controller\BackupController::listAllTitle'
+     _controller: '\Drupal\backup_migrate\Controller\BackupController::listDestinationEntityBackups'
+     _title_callback: '\Drupal\backup_migrate\Controller\BackupController::listDestinationEntityBackupsTitle'
    requirements:
      _permission: 'administer backup and migrate'
    options:

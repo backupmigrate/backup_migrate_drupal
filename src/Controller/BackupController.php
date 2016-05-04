@@ -25,7 +25,27 @@ class BackupController extends ControllerBase {
   var $destination;
 
 
-  public function listAllTitle(Destination $backup_migrate_destination) {
+  public function listAll() {
+    $bam = backup_migrate_get_service_object();
+
+    $out = [];
+    foreach ($bam->destinations()->getAllByOp('listFiles') as $id => $destination) {
+      $out[$id] = [
+        'title' => ['#markup' => '<h2>Backups in ' . $destination->confGet('name') . '</h2>'],
+        'list' => $this::listDestinationBackups($destination, $id),
+      ];
+    }
+    return $out;
+  }
+
+
+  /**
+   * Get the title for the listing page of a destination entity.
+   *
+   * @param \Drupal\backup_migrate\Entity\Destination $backup_migrate_destination
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   */
+  public function listDestinationEntityBackupsTitle(Destination $backup_migrate_destination) {
     return $this->t('Backups in @destination_name', ['@destination_name' => $backup_migrate_destination->label()]);
   }
 
@@ -34,10 +54,19 @@ class BackupController extends ControllerBase {
    *
    * @param \Drupal\backup_migrate\Entity\Destination $backup_migrate_destination
    * @return mixed
-   * @internal param \BackupMigrate\Core\Destination\ListableDestinationInterface $destination
    */
-  public function listAll(Destination $backup_migrate_destination) {
+  public function listDestinationEntityBackups(Destination $backup_migrate_destination) {
     $destination = $backup_migrate_destination->getObject();
+    return $this->listDestinationBackups($destination, $backup_migrate_destination->id());
+  }
+
+  /**
+   * List the backups in the given destination.
+   *
+   * @param \BackupMigrate\Core\Destination\ListableDestinationInterface $destination
+   * @return mixed
+   */
+  public function listDestinationBackups(ListableDestinationInterface $destination, $backup_migrate_destination_id) {
     $backups = $destination->listFiles();
 
     $rows = [];
@@ -72,7 +101,7 @@ class BackupController extends ControllerBase {
                   'url' => Url::fromRoute(
                     'entity.backup_migrate_destination.backup_restore',
                     [
-                      'backup_migrate_destination' => $backup_migrate_destination->id(),
+                      'backup_migrate_destination' => $backup_migrate_destination_id,
                       'backup_id' => $backup_id
                     ]
                   )
@@ -82,7 +111,7 @@ class BackupController extends ControllerBase {
                   'url' => Url::fromRoute(
                     'entity.backup_migrate_destination.backup_download',
                     [
-                      'backup_migrate_destination' => $backup_migrate_destination->id(),
+                      'backup_migrate_destination' => $backup_migrate_destination_id,
                       'backup_id' => $backup_id
                     ]
                   )
@@ -92,7 +121,7 @@ class BackupController extends ControllerBase {
                   'url' => Url::fromRoute(
                     'entity.backup_migrate_destination.backup_delete',
                     [
-                      'backup_migrate_destination' => $backup_migrate_destination->id(),
+                      'backup_migrate_destination' => $backup_migrate_destination_id,
                       'backup_id' => $backup_id
                     ]
                   )
