@@ -38,6 +38,7 @@ use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
  *     "edit-form" = "/admin/config/development/backup_migrate/settings/destination/edit/{backup_migrate_destination}",
  *     "delete-form" = "/admin/config/development/backup_migrate/settings/destination/delete/{backup_migrate_destination}",
  *     "collection" = "/admin/config/development/backup_migrate/settings/destination",
+ *     "backups" = "/admin/config/development/backup_migrate/settings/destination/backups/{backup_migrate_destination}",
  *   }
  * )
  */

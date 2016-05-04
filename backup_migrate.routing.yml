@@ -120,10 +120,57 @@ entity.backup_migrate_destination.edit_form:
 entity.backup_migrate_destination.delete_form:
    path: '/admin/config/development/backup_migrate/settings/destination/delete/{backup_migrate_destination}'
    defaults:
-    _entity_form: backup_migrate_destination.delete
-    _title: 'Delete destination'
+     _entity_form: backup_migrate_destination.delete
+     _title: 'Delete destination'
    requirements:
      _permission: 'administer backup and migrate'
+
+entity.backup_migrate_destination.backups:
+   path: '/admin/config/development/backup_migrate/settings/destination/backups/{backup_migrate_destination}'
+   defaults:
+     _controller: '\Drupal\backup_migrate\Controller\BackupController::listAll'
+   requirements:
+     _permission: 'administer backup and migrate'
+   options:
+     parameters:
+       backup_migrate_destination:
+         type: entity:backup_migrate_destination
+
+entity.backup_migrate_destination.backup_delete:
+   path: '/admin/config/development/backup_migrate/settings/destination/backups/{backup_migrate_destination}/delete/{backup_id}'
+   defaults:
+     _controller: '\Drupal\backup_migrate\Controller\BackupController::delete'
+     _title: 'Delete Backup'
+   requirements:
+     _permission: 'administer backup and migrate'
+   options:
+     parameters:
+       backup_migrate_destination:
+         type: entity:backup_migrate_destination
+
+entity.backup_migrate_destination.backup_download:
+   path: '/admin/config/development/backup_migrate/settings/destination/backups/{backup_migrate_destination}/download/{backup_id}'
+   defaults:
+     _controller: '\Drupal\backup_migrate\Controller\BackupController::download'
+     _title: 'Downlod Backup'
+   requirements:
+     _permission: 'administer backup and migrate'
+   options:
+     parameters:
+       backup_migrate_destination:
+         type: entity:backup_migrate_destination
+
+entity.backup_migrate_destination.backup_restore:
+   path: '/admin/config/development/backup_migrate/settings/destination/backups/{backup_migrate_destination}/restore/{backup_id}'
+   defaults:
+     _controller: '\Drupal\backup_migrate\Controller\BackupController::restore'
+     _title: 'Restore from Backup'
+   requirements:
+     _permission: 'administer backup and migrate'
+   options:
+     parameters:
+       backup_migrate_destination:
+         type: entity:backup_migrate_destination
 
 
 # Backup Source
