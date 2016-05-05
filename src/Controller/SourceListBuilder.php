@@ -31,8 +31,7 @@ class SourceListBuilder extends ConfigEntityListBuilder {
     $row['label'] = $entity->label();
     $row['id'] = $entity->id();
     $row['type'] = $entity->get('type');
-    if ($plugin = $entity->getPlugin()) {
-      $info = $plugin->getPluginDefinition();
+    if ($info = $entity->getPluginDefinition()) {
       $row['type'] = $info['title'];
     }
 

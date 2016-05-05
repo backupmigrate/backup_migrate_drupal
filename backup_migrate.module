@@ -117,23 +117,6 @@ function backup_migrate_backup_migrate_service_object_alter(BackupMigrateInterfa
   $services->add('ArchiveReader', new \BackupMigrate\Core\Service\TarArchiveReader());
   $services->add('ArchiveWriter', new \BackupMigrate\Core\Service\TarArchiveWriter());
 
-
-  // Add the default database.
-  $info = \Drupal\Core\Database\Database::getConnectionInfo('default', 'default');
-  $info = $info['default'];
-  if ($info['driver'] == 'mysql') {
-    $db = new \BackupMigrate\Core\Source\MySQLiSource(new Config($info + ['name' => t('Default Database')]));
-    $sources->add('db', $db);
-
-    // Add the entire site
-    $sources->add('site', new \BackupMigrate\Drupal\Source\DrupalSiteArchiveSource(new Config(['name' => t('Entire Site'), 'directory' => DRUPAL_ROOT]), $db));
-  }
-
-  // Add the public files
-  $files_public = new \BackupMigrate\Drupal\Source\DrupalPublicFilesSource(new Config(['name' => t('Public Files Directory')]));
-  $sources->add('files_public', $files_public);
-  $plugins->add('files_public_exclude', new \BackupMigrate\Drupal\Filter\DrupalPublicFileExcludeFilter(new Config(['source' => $files_public])));
-
   // If this is a nobrowser op (cron) then do not add the browser plugins.
   // TODO: Make this better.
   if (empty($options['nobrowser'])) {
@@ -146,13 +129,7 @@ function backup_migrate_backup_migrate_service_object_alter(BackupMigrateInterfa
     // Add a debug destination.
     $destinations->add('debug', new \BackupMigrate\Core\Destination\DebugDestination(new Config(['name' => t('Debug'), 'format' => 'html'])));
   }
-
-  // Add a private directory destination.
-  $destinations->add('private', new \BackupMigrate\Drupal\Destination\DrupalDirectoryDestination(new Config(['name' => t('Private Files Directory'), 'directory' => 'private://backup_migrate/'])));
-
-
-  $plugins->add('db_exclude', new \BackupMigrate\Core\Filter\DBExcludeFilter());
-
+  
   // Add a file naming filter.
   $plugins->add('namer', new \BackupMigrate\Core\Filter\FileNamer());
 

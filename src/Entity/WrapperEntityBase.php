@@ -12,6 +12,7 @@ use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * A configuration entity that wraps a Backup and Migrate plugin.
@@ -68,6 +69,19 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
   }
 
   /**
+   * Get the type plugin for this source
+   *
+   * @return mixed
+   * @throws \BackupMigrate\Core\Exception\BackupMigrateException
+   */
+  public function getPluginDefinition() {
+    if ($plugin = $this->getPlugin()) {
+      return $plugin->getPluginDefinition();
+    }
+    return [];
+  }
+
+  /**
    * Gets the plugin collections used by this entity.
    *
    * @return \Drupal\Component\Plugin\LazyPluginCollection[]
@@ -95,6 +109,21 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
     }
     return [];
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access($operation, AccountInterface $account = NULL, $return_as_object = FALSE) {
+    if ($operation == "update" || $operation == "delete") {
+      $info = $this->getPluginDefinition();
+      if ($info['locked']) {
+        return false;
+      }
+    }
+
+    return parent::access($operation, $account, $return_as_object);
+  }
+
 
   /**
    * Return the plugin manager.

@@ -51,4 +51,11 @@ class BackupMigrateSourcePlugin extends Plugin {
    */
   public $wrapped_class;
 
+  /**
+   * Whether new items of this type can be created.
+   *
+   * @var bool
+   */
+  public $locked;
+
 }
