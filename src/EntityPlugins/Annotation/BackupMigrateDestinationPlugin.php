@@ -49,4 +49,11 @@ class BackupMigrateDestinationPlugin extends Plugin {
    * @var string
    */
   public $wrapped_class;
+
+  /**
+   * Whether new items of this type can be created.
+   *
+   * @var bool
+   */
+  public $locked;
 }

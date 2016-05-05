@@ -83,5 +83,4 @@ abstract class WrapperPluginBase extends PluginBase implements WrapperPluginInte
   public function getConfig() {
     return new Config($this->getConfiguration());
   }
-
 }

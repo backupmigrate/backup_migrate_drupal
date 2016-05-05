@@ -48,8 +48,10 @@ class WrapperEntityForm  extends EntityForm {
         '#title' => $this->t('Type'),
       );
       foreach ($this->entity->getPluginManager()->getDefinitions() as $type) {
-        $form['type']['#options'][$type['id']] = $type['title'];
-        $form['type'][$type['id']]['#description'] = $type['description'];
+        if (empty($type['locked'])) {
+          $form['type']['#options'][$type['id']] = $type['title'];
+          $form['type'][$type['id']]['#description'] = $type['description'];
+        }
       }
     }
     else {
