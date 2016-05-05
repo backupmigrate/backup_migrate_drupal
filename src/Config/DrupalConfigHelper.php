@@ -191,7 +191,6 @@ class DrupalConfigHelper {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public static function valueCallbackSecret(&$element, $input, FormStateInterface $form_state) {
-    dd($element);
     if (empty($input)) {
       return $element['#default_value'];
     }
