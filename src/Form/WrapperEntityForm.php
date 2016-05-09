@@ -72,10 +72,7 @@ class WrapperEntityForm  extends EntityForm {
   }
 
   /**
-   * Returns an array of supported actions for the current entity form.
-   *
-   * @todo Consider introducing a 'preview' action here, since it is used by
-   *   many entity types.
+   * {@inheritdoc}
    */
   protected function actions(array $form, FormStateInterface $form_state) {
     $actions = parent::actions($form, $form_state);

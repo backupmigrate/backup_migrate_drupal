@@ -15,6 +15,7 @@ namespace BackupMigrate\Drupal\Source;
 
 
 use BackupMigrate\Core\Config\ConfigInterface;
+use BackupMigrate\Core\File\BackupFileReadableInterface;
 use BackupMigrate\Core\Source\FileDirectorySource;
 use BackupMigrate\Core\Source\SourceInterface;
 
@@ -76,10 +77,11 @@ class DrupalSiteArchiveSource extends FileDirectorySource
    * Import to this source from the given backup file. This is the main restore
    * function for this source.
    *
-   * @param \BackupMigrate\Core\File\BackupFileReadableInterface $file
+   * @param BackupFileReadableInterface $file
    *    The file to read the backup from. It will not be opened for reading
+   * @return bool|void
    */
-  public function importFromFile(\BackupMigrate\Core\File\BackupFileReadableInterface $file) {
+  public function importFromFile(BackupFileReadableInterface $file) {
     // TODO: Implement importFromFile() method.
   }
 
