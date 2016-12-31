@@ -113,6 +113,9 @@ class DrupalConfigHelper {
           $form_item['#type'] = 'textfield';
           if (!empty($item['multiple'])) {
             $form_item['#type'] = 'textarea';
+            if (!isset($form_item['#description'])) {
+              $form_item['#description'] = '';
+            }
             $form_item['#description'] .= ' ' . t('Add one item per line.');
             $form_item['#element_validate'] = ['BackupMigrate\Drupal\Config\DrupalConfigHelper::validateMultiText'];
             $value  = implode("\n", $value);
