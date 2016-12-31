@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "62315612213d73dd42ba8cbdb4bc2d87",
+    "content-hash": "518aaceb1e18640035942c9c6b283b22",
     "packages": [
         {
             "name": "backupmigrate/core",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/backupmigrate/backup_migrate_core.git",
-                "reference": "c027281c5de06af92520764a302a02a8d60949f4"
+                "reference": "c8083db3f992a48fbbfff232cce1de0f682919d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/backupmigrate/backup_migrate_core/zipball/c027281c5de06af92520764a302a02a8d60949f4",
-                "reference": "c027281c5de06af92520764a302a02a8d60949f4",
+                "url": "https://api.github.com/repos/backupmigrate/backup_migrate_core/zipball/c8083db3f992a48fbbfff232cce1de0f682919d8",
+                "reference": "c8083db3f992a48fbbfff232cce1de0f682919d8",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
                 "source": "https://github.com/backupmigrate/backup_migrate_core/tree/master",
                 "issues": "https://github.com/backupmigrate/backup_migrate_core/issues"
             },
-            "time": "2016-03-17 03:54:58"
+            "time": "2016-12-31 20:25:55"
         },
         {
             "name": "psr/log",
@@ -58,12 +58,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "d8e60a5619fff77f9669da8997697443ef1a1d7e"
+                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/d8e60a5619fff77f9669da8997697443ef1a1d7e",
-                "reference": "d8e60a5619fff77f9669da8997697443ef1a1d7e",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
                 "shasum": ""
             },
             "require": {
@@ -97,7 +97,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-01-06 21:40:42"
+            "time": "2016-10-10 12:19:37"
         }
     ],
     "packages-dev": [],
