@@ -1,9 +1,4 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Drupal\Source\SourcePluginManager
- */
-
 
 namespace BackupMigrate\Drupal\EntityPlugins;
 

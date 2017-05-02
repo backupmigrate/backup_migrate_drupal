@@ -1,20 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\backup_migrate\Entity\Source.
- */
-
 namespace Drupal\backup_migrate\Entity;
 
-use BackupMigrate\Core\Config\Config;
-use BackupMigrate\Core\Exception\BackupMigrateException;
-use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
-use Drupal\Core\Config\Entity\ConfigEntityBase;
 
-use BackupMigrate\Core\Source\SourceInterface;
-use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
-use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
 
 /**
  * Defines the Backup Source entity.
@@ -47,6 +35,7 @@ use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
  * )
  */
 class Source extends WrapperEntityBase {
+
   /**
    * Return the plugin manager.
    *
@@ -55,4 +44,5 @@ class Source extends WrapperEntityBase {
   public function getPluginManager() {
     return \Drupal::service('plugin.manager.backup_migrate_source');
   }
+
 }

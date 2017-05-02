@@ -1,16 +1,10 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Drupal\EntityPlugins\DestinationPluginManager
- */
-
 
 namespace BackupMigrate\Drupal\EntityPlugins;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
-
 
 /**
  * Class DestinationPluginManager

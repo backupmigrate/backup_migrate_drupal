@@ -1,12 +1,6 @@
 <?php
-/**
- * @file
- * Contains Drupal\backup_migrate\Entity\WrapperEntityBase
- */
-
 
 namespace Drupal\backup_migrate\Entity;
-
 
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
@@ -17,13 +11,14 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * A configuration entity that wraps a Backup and Migrate plugin.
  *
- * This base allows a configuration entity to use any B&M source or destination by
- * using Drupal's plugin system.
+ * This base allows a configuration entity to use any B&M source
+ * or destination by using Drupal's plugin system.
  *
  * Class WrapperEntityBase
  * @package Drupal\backup_migrate\Entity
  */
 abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithPluginCollectionInterface {
+
   /**
    * The Backup Source ID.
    *
@@ -47,6 +42,7 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
 
   /**
    * @return SourcePluginInterface
+   *
    * @throws \BackupMigrate\Core\Exception\BackupMigrateException
    */
   public function getObject() {
@@ -59,6 +55,7 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
    * Get the type plugin for this source
    *
    * @return mixed
+   *
    * @throws \BackupMigrate\Core\Exception\BackupMigrateException
    */
   public function getPlugin() {
@@ -72,6 +69,7 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
    * Get the type plugin for this source
    *
    * @return mixed
+   *
    * @throws \BackupMigrate\Core\Exception\BackupMigrateException
    */
   public function getPluginDefinition() {
@@ -116,7 +114,7 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
   public function access($operation, AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($operation == "update" || $operation == "delete") {
       $info = $this->getPluginDefinition();
-      if ($info['locked']) {
+      if (!empty($info['locked'])) {
         return false;
       }
     }
@@ -124,11 +122,11 @@ abstract class WrapperEntityBase extends ConfigEntityBase implements EntityWithP
     return parent::access($operation, $account, $return_as_object);
   }
 
-
   /**
    * Return the plugin manager.
    *
    * @return PluginManagerInterface
    */
   abstract public function getPluginManager();
+
 }

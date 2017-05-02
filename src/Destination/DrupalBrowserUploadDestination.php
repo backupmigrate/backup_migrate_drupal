@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Core\Destination\BrowserUploadDestination
- */
 
 namespace BackupMigrate\Drupal\Destination;
 
@@ -10,7 +6,6 @@ use BackupMigrate\Core\Destination\ReadableDestinationInterface;
 use BackupMigrate\Core\File\BackupFileInterface;
 use BackupMigrate\Core\File\ReadableStreamBackupFile;
 use BackupMigrate\Core\Plugin\PluginBase;
-
 
 /**
  * Class BrowserUploadDestination
@@ -62,4 +57,5 @@ class DrupalBrowserUploadDestination extends PluginBase implements ReadableDesti
   public function fileExists($id) {
     return (boolean)\Drupal::request()->files->has("files[$id]");
   }
+
 }

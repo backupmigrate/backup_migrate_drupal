@@ -1,12 +1,6 @@
 <?php
-/**
- * @file
- * Contains Drupal\backup_migrate\Plugin\BackupMigrateSource\DefaultDBSourcePlugin
- */
-
 
 namespace Drupal\backup_migrate\Plugin\BackupMigrateSource;
-
 
 use BackupMigrate\Core\Config\Config;
 use BackupMigrate\Core\Filter\FileExcludeFilter;
@@ -65,7 +59,7 @@ class DrupalFilesSourcePlugin extends SourcePluginBase {
     }
 
     // @TODO: Allow modules to add their own excluded defaults.
-
     $bam->plugins()->add($key . '_exclude', new FileExcludeFilter(new Config($config)));
   }
+
 }

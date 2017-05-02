@@ -1,10 +1,6 @@
 <?php
-/**
- * @file
- */
 
 namespace Drupal\backup_migrate\Controller;
-
 
 use BackupMigrate\Core\Destination\DestinationInterface;
 use BackupMigrate\Core\Destination\ListableDestinationInterface;
@@ -31,18 +27,20 @@ class BackupController extends ControllerBase {
     $out = [];
     foreach ($bam->destinations()->getAllByOp('listFiles') as $id => $destination) {
       $out[$id] = [
-        'title' => ['#markup' => '<h2>Backups in ' . $destination->confGet('name') . '</h2>'],
+        'title' => [
+         '#markup' => '<h2>Backups in ' . $destination->confGet('name') . '</h2>'
+        ],
         'list' => $this::listDestinationBackups($destination, $id),
       ];
     }
     return $out;
   }
 
-
   /**
    * Get the title for the listing page of a destination entity.
    *
    * @param \Drupal\backup_migrate\Entity\Destination $backup_migrate_destination
+   *
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    */
   public function listDestinationEntityBackupsTitle(Destination $backup_migrate_destination) {
@@ -53,6 +51,7 @@ class BackupController extends ControllerBase {
    * List the backups in the given destination.
    *
    * @param \Drupal\backup_migrate\Entity\Destination $backup_migrate_destination
+   *
    * @return mixed
    */
   public function listDestinationEntityBackups(Destination $backup_migrate_destination) {
@@ -64,6 +63,7 @@ class BackupController extends ControllerBase {
    * List the backups in the given destination.
    *
    * @param \BackupMigrate\Core\Destination\ListableDestinationInterface $destination
+   *
    * @return mixed
    */
   public function listDestinationBackups(ListableDestinationInterface $destination, $backup_migrate_destination_id) {
@@ -147,6 +147,7 @@ class BackupController extends ControllerBase {
    * Download a backup via the browser.
    *
    * @param \Drupal\backup_migrate\Entity\Destination $backup_migrate_destination
+   *
    * @param $backup_id
    */
   public function download(Destination $backup_migrate_destination, $backup_id) {
@@ -158,6 +159,4 @@ class BackupController extends ControllerBase {
     $browser->saveFile($file);
   }
 
-
 }
-

@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains ${NAMESPACE}\DrupalBrowserDownloadDestination
- */
 
 namespace BackupMigrate\Drupal\Destination;
 
@@ -28,4 +24,5 @@ class DrupalBrowserDownloadDestination extends BrowserDownloadDestination {
     // @TODO: Get rid of this ugliness:
     exit();
   }
+
 }

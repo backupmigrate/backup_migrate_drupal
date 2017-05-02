@@ -1,9 +1,4 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Drupal\EntityPlugins\WrapperPluginInterface
- */
-
 
 namespace BackupMigrate\Drupal\EntityPlugins;
 
@@ -17,6 +12,7 @@ use Drupal\Component\Plugin\ConfigurablePluginInterface;
  * @package BackupMigrate\Drupal\EntityPlugins
  */
 interface WrapperPluginInterface extends ConfigurablePluginInterface {
+
   /**
    * Alter the backup and migrate object to add the source and required services.
    *
@@ -30,4 +26,5 @@ interface WrapperPluginInterface extends ConfigurablePluginInterface {
    * @return mixed
    */
   public function alterBackupMigrate(BackupMigrateInterface $bam, $key, $options = []);
+
 }

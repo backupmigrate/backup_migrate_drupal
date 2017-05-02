@@ -1,4 +1,5 @@
 <?php
+
 use BackupMigrate\Core\Config\Config;
 use BackupMigrate\Core\Main\BackupMigrateInterface;
 use Drupal\backup_migrate\Entity\Destination;
@@ -8,7 +9,6 @@ use Drupal\backup_migrate\Entity\Source;
 require __DIR__.'/vendor/autoload.php';
 
 define('BACKP_MIGRATE_MODULE_VERSION', '8.x-4.x-dev');
-
 
 /**
  * Back up a source to 1 or more destinations.
@@ -24,13 +24,12 @@ function backup_migrate_perform_backup($source_id, $destination_id, $config = []
 
     // Run the backup.
     $bam->backup($source_id, $destination_id);
-    drupal_set_message('Backup Complete.');
+    drupal_set_message(t('Backup Complete.'));
   }
   catch (Exception $e) {
     drupal_set_message($e->getMessage(), 'error');
   }
 }
-
 
 /**
  * Restore a source from a destination and file id
@@ -48,7 +47,7 @@ function backup_migrate_perform_restore($source_id, $destination_id, $file_id = 
 
     // Run the backup.
     $bam->restore($source_id, $destination_id, $file_id);
-    drupal_set_message('Restore Complete.');
+    drupal_set_message(t('Restore Complete.'));
   }
   catch (Exception $e) {
     drupal_set_message($e->getMessage(), 'error');
@@ -172,4 +171,3 @@ function backup_migrate_cron() {
     $schedule->run($bam);
   }
 }
-

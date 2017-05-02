@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\backup_migrate\Form\DestinationForm.
- */
-
 namespace Drupal\backup_migrate\Form;
 
 /**

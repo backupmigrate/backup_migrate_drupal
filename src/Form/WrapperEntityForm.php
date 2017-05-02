@@ -1,12 +1,6 @@
 <?php
-/**
- * @file
- * Contains Drupal\backup_migrate\Form\WrapperEntityForm
- */
-
 
 namespace Drupal\backup_migrate\Form;
-
 
 use BackupMigrate\Drupal\Config\DrupalConfigHelper;
 use Drupal\Core\Entity\EntityForm;
@@ -18,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @package Drupal\backup_migrate\Form
  */
 class WrapperEntityForm  extends EntityForm {
+
   /**
    * {@inheritdoc}
    */

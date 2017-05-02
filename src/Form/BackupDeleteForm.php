@@ -1,12 +1,6 @@
 <?php
-/**
- * @file
- * Contains Drupal\backup_migrate\Form\BackupDeleteForm
- */
-
 
 namespace Drupal\backup_migrate\Form;
-
 
 use Drupal\backup_migrate\Entity\Destination;
 use Drupal\Core\Form\ConfirmFormBase;
@@ -73,7 +67,6 @@ class BackupDeleteForm extends ConfirmFormBase {
     return 'backup_migrate_backup_delete_confirm';
   }
 
-
   public function buildForm(array $form, FormStateInterface $form_state, $backup_migrate_destination = NULL, $backup_id = NULL) {
     $this->destination = $backup_migrate_destination;
     $this->backup_id = $backup_id;
@@ -94,4 +87,5 @@ class BackupDeleteForm extends ConfirmFormBase {
     $destination->deleteFile($this->backup_id);
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
+
 }

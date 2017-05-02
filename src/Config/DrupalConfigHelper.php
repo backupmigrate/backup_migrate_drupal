@@ -1,9 +1,4 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Drupal\Config\DrupalConfigHelper
- */
-
 
 namespace BackupMigrate\Drupal\Config;
 
@@ -12,7 +7,6 @@ use BackupMigrate\Core\Main\BackupMigrateInterface;
 use BackupMigrate\Core\Plugin\PluginManagerInterface;
 use Drupal\backup_migrate\Entity\SettingsProfile;
 use Drupal\Core\Form\FormStateInterface;
-
 
 /**
  * Class DrupalConfigHelper
@@ -28,6 +22,7 @@ class DrupalConfigHelper {
    *  'backup', 'restore', or 'initialize' depending on the operation being configured for.
    * @param array $parents
    *  The form parents array.
+   *
    * @return array
    */
   static public function buildAllPluginsForm(PluginManagerInterface $plugins, $operation, $parents = []) {
@@ -50,6 +45,7 @@ class DrupalConfigHelper {
    * @param string $operation
    *  'backup', 'restore', or 'initialize' depending on the operation being configured for.
    * @param array $parents
+   *
    * @return array
    */
   static public function buildPluginForm($plugin, $operation, $parents = ['config']) {
@@ -58,7 +54,6 @@ class DrupalConfigHelper {
 
     return DrupalConfigHelper::buildFormFromSchema($schema, $config, $parents);
   }
-
 
   /**
    * @param array $schema
@@ -88,85 +83,92 @@ class DrupalConfigHelper {
    */
   static public function addFieldsFromSchema(&$form, $schema, ConfigInterface $config, $parents = []) {
     // Add the specified groups.
-    foreach ($schema['groups'] as $group_key => $item) {
-      // If the group is just called 'default' then use the key from the plugin as the group key.
-      // @TODO: make this less ugly.
-      if ($group_key == 'default' && $parents) {
-        $group_key = end($parents);
-      }
-      if (!isset($form[$group_key])) {
-        $form[$group_key] = [
-          '#type' => 'fieldset',
-          '#title' => $item['title'],
-          '#tree' => FALSE,
-        ];
+    if (isset($schema['groups'])) {
+      foreach ($schema['groups'] as $group_key => $item) {
+        // If the group is just called 'default' then use the key from the plugin as the group key.
+        // @TODO: make this less ugly.
+        if ($group_key == 'default' && $parents) {
+          $group_key = end($parents);
+        }
+        if (!isset($form[$group_key])) {
+          $form[$group_key] = [
+            '#type' => 'fieldset',
+            '#title' => $item['title'],
+            '#tree' => FALSE,
+          ];
+        }
       }
     }
 
     // Add each of the fields.
-    foreach ($schema['fields'] as $field_key => $item) {
-      $form_item = [];
-      $value = $config->get($field_key);
+    if (isset($schema['fields'])) {
+      foreach ($schema['fields'] as $field_key => $item) {
+        $form_item = [];
+        $value = $config->get($field_key);
 
-      switch ($item['type']) {
-        case 'text':
-          $form_item['#type'] = 'textfield';
-          if (!empty($item['multiple'])) {
-            $form_item['#type'] = 'textarea';
-            $form_item['#description'] .= ' ' . t('Add one item per line.');
-            $form_item['#element_validate'] = ['BackupMigrate\Drupal\Config\DrupalConfigHelper::validateMultiText'];
-            $value  = implode("\n", $value);
-          }
-          if (!empty($item['multiline'])) {
-            $form_item['#type'] = 'textarea';
-          }
-          break;
-        case 'password':
-          $form_item['#type'] = 'password';
-          $form_item['#value_callback'] = 'BackupMigrate\Drupal\Config\DrupalConfigHelper::valueCallbackSecret';
-          break;
-        case 'number':
-          $form_item['#type'] = 'textfield';
-          $form_item['#size'] = 5;
-          if (!empty($item['max'])) {
-            $form_item['#size'] = strlen((string)$item['max']) + 3;
-          }
-          break;
-        case 'boolean':
-          $form_item['#type'] = 'checkbox';
-          break;
-        case 'enum':
-          $form_item['#type'] = 'select';
-          $form_item['#multiple'] = !empty($item['multiple']);
-          if (empty($item['#required']) && empty($item['multiple'])) {
-            $item['options'] = ['' => '--' . t('None') . '--'] + $item['options'];
-          }
-          $form_item['#options'] = $item['options'];
-          break;
-      }
-
-      // If there is a form item add it to the form.
-      if ($form_item) {
-        // Add the common form elements.
-        $form_item['#title'] = $item['title'];
-        $form_item['#parents'] = array_merge($parents, [$field_key]);
-        $form_item['#required'] = !empty($item['required']);
-        $form_item['#default_value'] = $value;
-
-        if (!empty($item['description'])) {
-          $form_item['#description'] = $item['description'];
+        switch ($item['type']) {
+          case 'text':
+            $form_item['#type'] = 'textfield';
+            if (!empty($item['multiple'])) {
+              $form_item['#type'] = 'textarea';
+              if (!isset($form_item['#description'])) {
+                $form_item['#description'] = '';
+              }
+              $form_item['#description'] .= ' ' . t('Add one item per line.');
+              $form_item['#element_validate'] = ['BackupMigrate\Drupal\Config\DrupalConfigHelper::validateMultiText'];
+              $value = implode("\n", $value);
+            }
+            if (!empty($item['multiline'])) {
+              $form_item['#type'] = 'textarea';
+            }
+            break;
+          case 'password':
+            $form_item['#type'] = 'password';
+            $form_item['#value_callback'] = 'BackupMigrate\Drupal\Config\DrupalConfigHelper::valueCallbackSecret';
+            break;
+          case 'number':
+            $form_item['#type'] = 'textfield';
+            $form_item['#size'] = 5;
+            if (!empty($item['max'])) {
+              $form_item['#size'] = strlen((string) $item['max']) + 3;
+            }
+            break;
+          case 'boolean':
+            $form_item['#type'] = 'checkbox';
+            break;
+          case 'enum':
+            $form_item['#type'] = 'select';
+            $form_item['#multiple'] = !empty($item['multiple']);
+            if (empty($item['#required']) && empty($item['multiple'])) {
+              $item['options'] = ['' => '--' . t('None') . '--'] + $item['options'];
+            }
+            $form_item['#options'] = $item['options'];
+            break;
         }
 
-        // Add the field to it's group or directly to the top level of the form.
-        if (!empty($item['group'])) {
-          $group_key = $item['group'];
-          if ($group_key == 'default' && $parents) {
-            $group_key = end($parents);
+        // If there is a form item add it to the form.
+        if ($form_item) {
+          // Add the common form elements.
+          $form_item['#title'] = $item['title'];
+          $form_item['#parents'] = array_merge($parents, [$field_key]);
+          $form_item['#required'] = !empty($item['required']);
+          $form_item['#default_value'] = $value;
+
+          if (!empty($item['description'])) {
+            $form_item['#description'] = $item['description'];
           }
-          $form[$group_key][$field_key] = $form_item;
-        }
-        else {
-          $form[$field_key] = $form_item;
+
+          // Add the field to it's group or directly to the top level of the form.
+          if (!empty($item['group'])) {
+            $group_key = $item['group'];
+            if ($group_key == 'default' && $parents) {
+              $group_key = end($parents);
+            }
+            $form[$group_key][$field_key] = $form_item;
+          }
+          else {
+            $form[$field_key] = $form_item;
+          }
         }
       }
     }
@@ -202,9 +204,10 @@ class DrupalConfigHelper {
    *
    * @param \BackupMigrate\Core\Config\ConfigurableInterface[]|\BackupMigrate\Core\Plugin\PluginManagerInterface $plugins
    * @param $title
+   * @param null $default_value
    * @return array
    */
-  public static function getPluginSelector(PluginManagerInterface $plugins, $title) {
+  public static function getPluginSelector(PluginManagerInterface $plugins, $title, $default_value = NULL) {
     $options = [];
     foreach ($plugins->getAll() as $key => $plugin) {
       $options[$key] = $plugin->confGet('name', $key);
@@ -213,6 +216,7 @@ class DrupalConfigHelper {
       '#type' => 'select',
       '#title' => $title,
       '#options' => $options,
+      '#default_value' => $default_value
     ];
   }
 
@@ -221,10 +225,11 @@ class DrupalConfigHelper {
    *
    * @param \BackupMigrate\Core\Main\BackupMigrateInterface $bam
    * @param $title
+   * @param null $default_value
    * @return array
    */
-  public static function getSourceSelector(BackupMigrateInterface $bam, $title) {
-    return DrupalConfigHelper::getPluginSelector($bam->sources(), $title);
+  public static function getSourceSelector(BackupMigrateInterface $bam, $title, $default_value = NULL) {
+    return DrupalConfigHelper::getPluginSelector($bam->sources(), $title, $default_value);
   }
 
   /**
@@ -232,10 +237,11 @@ class DrupalConfigHelper {
    *
    * @param \BackupMigrate\Core\Main\BackupMigrateInterface $bam
    * @param $title
+   * @param null $default_value
    * @return array
    */
-  public static function getDestinationSelector(BackupMigrateInterface $bam, $title) {
-    return DrupalConfigHelper::getPluginSelector($bam->destinations(), $title);
+  public static function getDestinationSelector(BackupMigrateInterface $bam, $title, $default_value = NULL) {
+    return DrupalConfigHelper::getPluginSelector($bam->destinations(), $title, $default_value);
   }
 
 

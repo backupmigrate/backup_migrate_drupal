@@ -1,23 +1,16 @@
 <?php
+
+namespace BackupMigrate\Drupal\Source;
+
 use BackupMigrate\Core\Plugin\FileProcessorTrait;
 use BackupMigrate\Core\Plugin\PluginBase;
 use BackupMigrate\Core\Service\ArchiverInterface;
 use BackupMigrate\Core\Source\FileDirectorySource;
 use BackupMigrate\Core\Source\SourceInterface;
 use BackupMigrate\Core\Translation\TranslatableTrait;
-
-/**
- * @file
- * Contains ${NAMESPACE}\DrupalSiteArchiveSource
- */
-
-namespace BackupMigrate\Drupal\Source;
-
-
 use BackupMigrate\Core\Config\ConfigInterface;
 use BackupMigrate\Core\File\BackupFileReadableInterface;
-use BackupMigrate\Core\Source\FileDirectorySource;
-use BackupMigrate\Core\Source\SourceInterface;
+
 
 /**
  * Class DrupalSiteArchiveSource
@@ -143,4 +136,5 @@ class DrupalSiteArchiveSource extends FileDirectorySource
   public function getDbSource() {
     return $this->db_source;
   }
+
 }

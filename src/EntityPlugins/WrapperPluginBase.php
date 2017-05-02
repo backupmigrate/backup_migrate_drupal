@@ -1,16 +1,10 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Drupal\EntityPlugins\WrapperPluginBase
- */
-
 
 namespace BackupMigrate\Drupal\EntityPlugins;
 
 use BackupMigrate\Core\Config\Config;
 use BackupMigrate\Core\Main\BackupMigrateInterface;
 use Drupal\Component\Plugin\PluginBase;
-
 
 /**
  * Class WrapperPluginBase
@@ -83,4 +77,5 @@ abstract class WrapperPluginBase extends PluginBase implements WrapperPluginInte
   public function getConfig() {
     return new Config($this->getConfiguration());
   }
+
 }

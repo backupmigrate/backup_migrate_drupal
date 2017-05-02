@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\backup_migrate\EntityPlugins\Annotation\BackupMigrateDestinationPlugin.
- */
-
 namespace BackupMigrate\Drupal\EntityPlugins\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
@@ -56,4 +51,5 @@ class BackupMigrateDestinationPlugin extends Plugin {
    * @var bool
    */
   public $locked;
+
 }

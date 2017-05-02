@@ -4,27 +4,25 @@ namespace Drupal\backup_migrate\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
- * Builds the form to delete config entities.
+ * Builds the form to delete Schedule entities.
  */
-class EntityDeleteForm extends EntityConfirmFormBase {
+class ScheduleDeleteForm extends EntityConfirmFormBase {
 
   /**
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t(
-      'Are you sure you want to delete %name?',
-      array('%name' => $this->entity->label())
-    );
+    return $this->t('Are you sure you want to delete %name?', array('%name' => $this->entity->label()));
   }
 
   /**
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return $this->entity->toUrl('collection');
+    return new Url('entity.backup_migrate_schedule.collection');
   }
 
   /**
@@ -41,7 +39,12 @@ class EntityDeleteForm extends EntityConfirmFormBase {
     $this->entity->delete();
 
     drupal_set_message(
-      $this->t('Deleted @label.', ['@label' => $this->entity->label()])
+      $this->t('content @type: deleted @label.',
+        [
+          '@type' => $this->entity->bundle(),
+          '@label' => $this->entity->label()
+        ]
+        )
     );
 
     $form_state->setRedirectUrl($this->getCancelUrl());

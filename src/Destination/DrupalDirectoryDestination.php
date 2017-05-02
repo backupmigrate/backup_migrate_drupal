@@ -1,12 +1,6 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Drupal\Destination\DrupalDirectoryDestination
- */
-
 
 namespace BackupMigrate\Drupal\Destination;
-
 
 use BackupMigrate\Core\Destination\DirectoryDestination;
 use BackupMigrate\Core\Exception\BackupMigrateException;
@@ -31,7 +25,7 @@ class DrupalDirectoryDestination extends DirectoryDestination {
     $this->checkDirectory();
 
     // @TODO Decide what the appropriate file_exists strategy should be.
-    file_unmanaged_move($file->realpath(), $this->confGet('directory') . $file->getFullName(), FILE_EXISTS_REPLACE);
+    file_unmanaged_move($file->realpath(), $this->_idToPath($file->getFullName()), FILE_EXISTS_REPLACE);
   }
 
 
@@ -70,7 +64,7 @@ class DrupalDirectoryDestination extends DirectoryDestination {
       if ($real) {
         // If the file is within the docroot.
         $in_root = strpos($real, DRUPAL_ROOT) === 0;
-        if ($in_root && !$is_private ) {
+        if ($in_root) {
           throw new BackupMigrateException(
             "The backup file could not be saved to '%dir' because that directory may be publicly accessible via the web. Please save your backups to the private file directory or a directory outside of the web root.",
             ['%dir' => $dir]

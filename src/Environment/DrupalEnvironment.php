@@ -1,9 +1,4 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Drupal\Environment\DrupalEnvironment
- */
-
 
 namespace BackupMigrate\Drupal\Environment;
 

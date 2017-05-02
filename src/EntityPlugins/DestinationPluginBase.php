@@ -1,12 +1,6 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Drupal\EntityPlugins\DestinationPluginBase
- */
-
 
 namespace BackupMigrate\Drupal\EntityPlugins;
-
 
 use BackupMigrate\Core\Main\BackupMigrateInterface;
 
@@ -22,4 +16,5 @@ abstract class DestinationPluginBase extends WrapperPluginBase implements Destin
   public function alterBackupMigrate(BackupMigrateInterface $bam, $key, $options = []) {
     $bam->destinations()->add($key, $this->getObject());
   }
+
 }

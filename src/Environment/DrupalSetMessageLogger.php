@@ -1,15 +1,8 @@
 <?php
-/**
- * @file
- * Contains BackupMigrate\Drupal\Environment\DrupalLogger
- */
-
 
 namespace BackupMigrate\Drupal\Environment;
 
-
 use Psr\Log\AbstractLogger;
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
@@ -20,6 +13,7 @@ use Psr\Log\LogLevel;
  * interactive mode.
  */
 class DrupalSetMessageLogger extends AbstractLogger {
+
   /**
    * Logs with an arbitrary level.
    *
@@ -50,4 +44,5 @@ class DrupalSetMessageLogger extends AbstractLogger {
     // @TODO: Handle translations properly.
     drupal_set_message($message, $type, FALSE);
   }
+
 }

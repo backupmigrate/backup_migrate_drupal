@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\backup_migrate\Entity\Schedule.
- */
-
 namespace Drupal\backup_migrate\Entity;
 
 use BackupMigrate\Core\Config\Config;
@@ -40,6 +35,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  * )
  */
 class Schedule extends ConfigEntityBase {
+
   /**
    * The Schedule ID.
    *
@@ -83,12 +79,13 @@ class Schedule extends ConfigEntityBase {
           $config = $profile->get('config');
         }
 
-        \Drupal::logger('backup_migrate')->info("Running schedule %name", ['%name' => $this->get('label')]);
+        \Drupal::logger('backup_migrate')->info(
+             "Running schedule %name", ['%name' => $this->get('label')]);
         // TODO: Set the config (don't just use the defaults).
         // Run the backup.
         $bam->setConfig(new Config($config));
         $bam->backup($this->get('source_id'), $this->get('destination_id'), $config);
-        drupal_set_message('Backup Complete.');
+        drupal_set_message(t('Backup Complete.'));
       }
       catch (BackupMigrateException $e) {
         \Drupal::logger('backup_migrate')->error(
@@ -196,6 +193,7 @@ class Schedule extends ConfigEntityBase {
    * Get a backup period type given it's key.
    *
    * @param string $type
+   *
    * @return array
    */
   public static function getPeriodType($type) {

@@ -1,15 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\backup_migrate\Form\SettingsProfileForm.
- */
-
 namespace Drupal\backup_migrate\Form;
 
-use BackupMigrate\Core\Config\Config;
 use BackupMigrate\Drupal\Config\DrupalConfigHelper;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -19,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @package Drupal\backup_migrate\Form
  */
 class SettingsProfileForm extends EntityForm {
+
   /**
    * {@inheritdoc}
    */
@@ -72,7 +66,7 @@ class SettingsProfileForm extends EntityForm {
           '%label' => $backup_migrate_settings->label(),
         ]));
     }
-    $form_state->setRedirectUrl($backup_migrate_settings->urlInfo('collection'));
+    $form_state->setRedirectUrl($backup_migrate_settings->toUrl('collection'));
   }
 
 }

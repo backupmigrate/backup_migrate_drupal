@@ -3,5 +3,4 @@ description: 'Backup the Drupal database and files or migrate them to another en
 package: Other
 type: module
 core: 8.x
-
-#configure: -- pending new D8 routing format -- as per https://www.drupal.org/node/2118147 -- admin/config/system/backup_migrate
+configure: backup_migrate.quick_backup

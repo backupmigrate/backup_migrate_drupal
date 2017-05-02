@@ -1,12 +1,6 @@
 <?php
-/**
- * @file
- * Contains Drupal\backup_migrate\Form\BackupDeleteForm
- */
-
 
 namespace Drupal\backup_migrate\Form;
-
 
 use BackupMigrate\Drupal\Config\DrupalConfigHelper;
 use Drupal\backup_migrate\Entity\Destination;
@@ -96,4 +90,5 @@ class BackupRestoreForm extends ConfirmFormBase {
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
+
 }

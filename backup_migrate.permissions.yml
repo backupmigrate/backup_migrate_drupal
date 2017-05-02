@@ -27,4 +27,3 @@
   'title': 'Administer Backup and Migrate'
   'description': 'Edit Backup and Migrate profiles, schedules and destinations.'
   restrict access: true
-
