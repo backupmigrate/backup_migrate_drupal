@@ -8,10 +8,11 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class WrapperEntityForm
+ * Class WrapperEntityForm.
+ *
  * @package Drupal\backup_migrate\Form
  */
-class WrapperEntityForm  extends EntityForm {
+class WrapperEntityForm extends EntityForm {
 
   /**
    * {@inheritdoc}
@@ -19,29 +20,26 @@ class WrapperEntityForm  extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    $form['label'] = array(
+    $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $this->entity->label(),
-      '#description' => $this->t("Label for the Backup Source."),
       '#required' => TRUE,
-    );
+    ];
 
-    $form['id'] = array(
+    $form['id'] = [
       '#type' => 'machine_name',
       '#default_value' => $this->entity->id(),
-      '#machine_name' => array(
-        'exists' => '\Drupal\backup_migrate\Entity\Source::load',
-      ),
+      '#machine_name' => [],
       '#disabled' => !$this->entity->isNew(),
-    );
+    ];
 
     if (!$this->entity->get('type')) {
-      $form['type'] = array(
+      $form['type'] = [
         '#type' => 'radios',
         '#title' => $this->t('Type'),
-      );
+      ];
       foreach ($this->entity->getPluginManager()->getDefinitions() as $type) {
         if (empty($type['locked'])) {
           $form['type']['#options'][$type['id']] = $type['title'];
@@ -51,18 +49,16 @@ class WrapperEntityForm  extends EntityForm {
     }
     else {
       $type = $this->entity->getPlugin()->getPluginDefinition();
-      $form['type'] = array(
+      $form['type'] = [
         '#type' => 'value',
         '#value' => $type['id'],
-        '#markup' => $this->t("Type: @type", ['@type' => $type['title']])
-      );
+        '#markup' => $this->t("Type: @type", ['@type' => $type['title']]),
+      ];
 
       if ($bam_plugin = $this->entity->getObject()) {
         $form['config'] = DrupalConfigHelper::buildPluginForm($bam_plugin, 'initialize', ['config']);
       }
     }
-
-
     return $form;
   }
 
@@ -85,7 +81,7 @@ class WrapperEntityForm  extends EntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
 
-    $status = $entity ->save();
+    $status = $entity->save();
 
     switch ($status) {
       case SAVED_NEW:
@@ -105,8 +101,9 @@ class WrapperEntityForm  extends EntityForm {
   }
 
   /**
-   * Override this function to let it store the config which would otherwise be
-   * removed for some reason.
+   * Override this function.
+   *
+   * Let it store the config which would otherwise be removed for some reason.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity the current form should operate upon.

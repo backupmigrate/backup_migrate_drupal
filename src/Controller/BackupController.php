@@ -22,16 +22,28 @@ class BackupController extends ControllerBase {
 
 
   public function listAll() {
-    $bam = backup_migrate_get_service_object();
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage('backup_migrate_destination');
 
     $out = [];
-    foreach ($bam->destinations()->getAllByOp('listFiles') as $id => $destination) {
-      $out[$id] = [
+    foreach ($storage->getQuery()->execute() as $key) {
+      $entity = $storage->load($key);
+      $destination = $entity->getObject();
+      $label = $destination->confGet('name');
+
+      $out[$key] = [
         'title' => [
-         '#markup' => '<h2>Backups in ' . $destination->confGet('name') . '</h2>'
+          '#markup' => '<h2>' . $this->t('Most recent backups in %dest', ['%dest' => $label]) . '</h2>'
         ],
-        'list' => $this::listDestinationBackups($destination, $id),
+        'list' => $this::listDestinationBackups($destination, $key, 5),
       ];
+      // Add the more link.
+      if ($entity->access('backups') && $entity->hasLinkTemplate('backups')) {
+        $out[$key]['link'] = $entity->toLink(
+          $this->t('View all backups in %dest', ['%dest' => $label]), 'backups'
+        )->toRenderable();
+      }
+
     }
     return $out;
   }
@@ -43,8 +55,11 @@ class BackupController extends ControllerBase {
    *
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    */
-  public function listDestinationEntityBackupsTitle(Destination $backup_migrate_destination) {
-    return $this->t('Backups in @destination_name', ['@destination_name' => $backup_migrate_destination->label()]);
+  public function listDestinationEntityBackupsTitle(
+    Destination $backup_migrate_destination
+  ) {
+    return $this->t('Backups in @destination_name',
+      ['@destination_name' => $backup_migrate_destination->label()]);
   }
 
   /**
@@ -54,9 +69,13 @@ class BackupController extends ControllerBase {
    *
    * @return mixed
    */
-  public function listDestinationEntityBackups(Destination $backup_migrate_destination) {
+  public
+  function listDestinationEntityBackups(
+    Destination $backup_migrate_destination
+  ) {
     $destination = $backup_migrate_destination->getObject();
-    return $this->listDestinationBackups($destination, $backup_migrate_destination->id());
+    return $this->listDestinationBackups($destination,
+      $backup_migrate_destination->id());
   }
 
   /**
@@ -66,23 +85,33 @@ class BackupController extends ControllerBase {
    *
    * @return mixed
    */
-  public function listDestinationBackups(ListableDestinationInterface $destination, $backup_migrate_destination_id) {
-    $backups = $destination->listFiles();
+  public
+  function listDestinationBackups(
+    ListableDestinationInterface $destination,
+    $backup_migrate_destination_id,
+    $count = NULL
+  ) {
+    // Get a sorted list of files
+    $backups = $destination->queryFiles([], NULL, NULL, $count);
 
     $rows = [];
     $header = array(
       array(
         'data' => $this->t('Name'),
-        'class' => array(RESPONSIVE_PRIORITY_MEDIUM)),
+        'class' => array(RESPONSIVE_PRIORITY_MEDIUM)
+      ),
       array(
         'data' => $this->t('Date'),
-        'class' => array(RESPONSIVE_PRIORITY_MEDIUM)),
+        'class' => array(RESPONSIVE_PRIORITY_MEDIUM)
+      ),
       array(
         'data' => $this->t('Size'),
-        'class' => array(RESPONSIVE_PRIORITY_MEDIUM)),
+        'class' => array(RESPONSIVE_PRIORITY_MEDIUM)
+      ),
       array(
         'data' => $this->t('Operations'),
-        'class' => array(RESPONSIVE_PRIORITY_LOW)),
+        'class' => array(RESPONSIVE_PRIORITY_LOW)
+      ),
     );
 
     foreach ($backups as $backup_id => $backup) {
@@ -90,7 +119,8 @@ class BackupController extends ControllerBase {
         'data' => [
           // Cells.
           $backup->getFullName(),
-          \Drupal::service('date.formatter')->format($backup->getMeta('datestamp')),
+          \Drupal::service('date.formatter')
+            ->format($backup->getMeta('datestamp')),
           format_size($backup->getMeta('filesize')),
           [
             'data' => [
@@ -150,7 +180,11 @@ class BackupController extends ControllerBase {
    *
    * @param $backup_id
    */
-  public function download(Destination $backup_migrate_destination, $backup_id) {
+  public
+  function download(
+    Destination $backup_migrate_destination,
+    $backup_id
+  ) {
     $destination = $backup_migrate_destination->getObject();
     $file = $destination->getFile($backup_id);
     $file = $destination->loadFileForReading($file);

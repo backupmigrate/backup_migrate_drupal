@@ -95,13 +95,13 @@ class ScheduleForm extends EntityForm {
       $form['period_container']['period_type']['#options'][$key] = $type['title'];
     }
 
-//    $form['keep'] = array(
-//      '#type' => 'textfield',
-//      '#title' => $this->t('Number to keep'),
-//      '#default_value' => $backup_migrate_schedule->get('keep'),
-//      '#description' => $this->t('The number of backups to retain. Once this number is reached, the oldest backup will be deleted to make room for the most recent backup. Leave blank to keep all backups.'),
-//      '#size' => 10,
-//    );
+    $form['keep'] = array(
+      '#type' => 'textfield',
+      '#title' => $this->t('Number to keep'),
+      '#default_value' => $backup_migrate_schedule->get('keep'),
+      '#description' => $this->t('The number of backups to retain. Once this number is reached, the oldest backup will be deleted to make room for the most recent backup. Leave blank to keep all backups.'),
+      '#size' => 10,
+    );
 
     return $form;
   }
